@@ -8,6 +8,7 @@ import 'package:oktava/services/auth/firebase_auth_provider.dart';
 import 'package:oktava/views/forgot_password_view.dart';
 import 'package:oktava/views/login_view.dart';
 import 'package:oktava/views/register_view.dart';
+import 'package:oktava/views/verify_email_view.dart';
 
 void main() {
   runApp(
@@ -47,10 +48,10 @@ class HomePage extends StatelessWidget {
       builder: (context, state) {
         // if (state is AuthStateLoggedIn) {
         //   return const AudioPlayerView();
-        // } else if (state is AuthStateNeedsVerification) {
-        //   return const VerifyEmailView();
-        //} else
-        if (state is AuthStateLoggedOut) {
+        // } else
+        if (state is AuthStateNeedsVerification) {
+          return const VerifyEmailView();
+        } else if (state is AuthStateLoggedOut) {
           return const LoginView();
         } else if (state is AuthStateForgotPassword) {
           return const ForgotPasswordView();
