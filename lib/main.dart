@@ -24,36 +24,11 @@ void main() {
     return true;
   });
 
-  runApp(
-    MaterialApp(
-      home: MultiRepositoryProvider(
-        providers: [
-          RepositoryProvider<AudioPlayerProvider>(
-            create: (context) => LocalAudioPlayerService(
-                audioPlayerModels: AudioPlayerModelFactory.getAudioModels()),
-          ),
-        ],
-        child: MultiBlocProvider(
-          providers: [
-            BlocProvider<AuthBloc>(
-              create: (context) => AuthBloc(FirebaseAuthProvider()),
-            ),
-            BlocProvider<AudioPlayerBloc>(
-              create: (context) => AudioPlayerBloc(
-                  assetsAudioPlayer: AssetsAudioPlayer.newPlayer(),
-                  audioPlayerProvider:
-                      RepositoryProvider.of<AudioPlayerProvider>(context)),
-            )
-          ],
-          child: const HomePage(),
-        ),
-      ),
-    ),
-  );
+  runApp(const App());
 }
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +36,36 @@ class HomePage extends StatelessWidget {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<AudioPlayerProvider>(
+          create: (context) => LocalAudioPlayerService(
+              audioPlayerModels: AudioPlayerModelFactory.getAudioModels()),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(
+            create: (context) => AuthBloc(FirebaseAuthProvider()),
+          ),
+          BlocProvider<AudioPlayerBloc>(
+            create: (context) => AudioPlayerBloc(
+                assetsAudioPlayer: AssetsAudioPlayer.newPlayer(),
+                audioPlayerProvider:
+                    RepositoryProvider.of<AudioPlayerProvider>(context)),
+          )
+        ],
+        child: const MaterialApp(home: HomePage()),
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     context.read<AuthBloc>().add(const AuthEventInitialize());
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
