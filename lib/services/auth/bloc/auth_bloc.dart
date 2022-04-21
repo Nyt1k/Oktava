@@ -17,6 +17,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
+
+  
     on<AuthEventForgotPassword>(
       (event, emit) async {
         emit(const AuthStateForgotPassword(

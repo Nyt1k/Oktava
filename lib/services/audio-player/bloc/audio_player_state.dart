@@ -1,18 +1,20 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 
-abstract class AudioPlayerState extends Equatable {
+@immutable
+abstract class AudioPlayerState {
   const AudioPlayerState();
 }
 
-class AudioPlayerInitialState extends AudioPlayerState {
+class AudioPlayerInitialState extends AudioPlayerState with EquatableMixin {
   const AudioPlayerInitialState();
 
   @override
   List<Object?> get props => [];
 }
 
-class AudioPlayerReadyState extends AudioPlayerState {
+class AudioPlayerReadyState extends AudioPlayerState with EquatableMixin {
   final List<AudioPlayerModel> entityList;
 
   const AudioPlayerReadyState(this.entityList);
@@ -21,7 +23,7 @@ class AudioPlayerReadyState extends AudioPlayerState {
   List<Object?> get props => [entityList];
 }
 
-class AudioPlayerPlayingState extends AudioPlayerState {
+class AudioPlayerPlayingState extends AudioPlayerState with EquatableMixin {
   final AudioPlayerModel playingEntity;
   final List<AudioPlayerModel> entityList;
 
@@ -31,7 +33,7 @@ class AudioPlayerPlayingState extends AudioPlayerState {
   List<Object?> get props => [playingEntity, entityList];
 }
 
-class AudioPlayerPausedState extends AudioPlayerState {
+class AudioPlayerPausedState extends AudioPlayerState with EquatableMixin {
   final List<AudioPlayerModel> entityList;
   final AudioPlayerModel pausedEntity;
 
@@ -41,7 +43,7 @@ class AudioPlayerPausedState extends AudioPlayerState {
   List<Object?> get props => [pausedEntity];
 }
 
-class AudioPlayerFailureState extends AudioPlayerState {
+class AudioPlayerFailureState extends AudioPlayerState with EquatableMixin {
   final String error;
 
   const AudioPlayerFailureState(this.error);
