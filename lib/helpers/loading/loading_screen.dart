@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:oktava/helpers/loading/loading_screen_controller.dart';
+import 'package:oktava/utilities/constants/color_constants.dart';
 
 class LoadingScreen {
   factory LoadingScreen() => _shared;
@@ -52,7 +53,7 @@ class LoadingScreen {
                 minWidth: size.width * 0.5,
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: mainColor,
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Padding(

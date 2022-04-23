@@ -11,6 +11,7 @@ import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';
 import 'package:oktava/services/auth/firebase_auth_provider.dart';
+import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/navigation_drawer_widget.dart';
 import 'package:oktava/views/audio_player_view.dart';
 import 'package:oktava/views/forgot_password_view.dart';
@@ -118,7 +119,7 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: () => Scaffold.of(context).openDrawer(),
               icon: const Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: Color.fromARGB(255, 73, 73, 73),
+                color: secondaryColor,
               ),
             );
           }),
@@ -126,10 +127,10 @@ class _MainScreenState extends State<MainScreen> {
           title: const Text(
             "OKTAVA",
             style: TextStyle(
-              color: Color.fromARGB(255, 73, 73, 73),
+              color: secondaryColor,
             ),
           ),
-          backgroundColor: const Color.fromARGB(255, 145, 245, 230),
+          backgroundColor: mainColor,
         ),
         body: const AudioPlayerView());
   }

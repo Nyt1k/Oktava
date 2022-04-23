@@ -95,10 +95,9 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
             updatedModel.audio,
             showNotification: true,
           );
-          emit(AudioPlayerPlayingState(updatedList, updatedModel));
-        }
 
-        if (state is AudioPlayerPausedState) {
+          emit(AudioPlayerPlayingState(updatedList, updatedModel));
+        } else if (state is AudioPlayerPausedState) {
           if (event.audioPlayerModel.id ==
               (state as AudioPlayerPausedState).pausedEntity.id) {
             final AudioPlayerModel updatedModel =
@@ -114,7 +113,6 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
                 event.audioPlayerModel.copyWithIsPlaying(true);
             final updatedList =
                 await audioPlayerProvider.updateModel(updatedModel);
-
             await assetsAudioPlayer.open(
               updatedModel.audio,
               showNotification: true,
@@ -124,20 +122,32 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
             emit(AudioPlayerPlayingState(updatedList, updatedModel));
           }
-        }
+        } else if (state is AudioPlayerPlayingState) {
+          final List<AudioPlayerModel> currentList =
+              await audioPlayerProvider.getAll();
+          AudioPlayerModel currentlyPlaying =
+              currentList.firstWhere((element) => element.isPlaying == true);
+          currentlyPlaying.copyWithIsPlaying(false);
+          final List<AudioPlayerModel> updatedList = currentList
+              .map((audioModel) =>
+                  audioModel.audio.metas.id == currentlyPlaying.id
+                      ? audioModel.copyWithIsPlaying(false)
+                      : audioModel)
+              .toList();
+          await audioPlayerProvider.updateAllModels(updatedList);
 
-        if (state is AudioPlayerPlayingState) {
+          emit(AudioPlayerPausedState(updatedList, currentlyPlaying));
+
           final AudioPlayerModel updatedModel =
               event.audioPlayerModel.copyWithIsPlaying(true);
-          final updatedList =
+          final updatedNewList =
               await audioPlayerProvider.updateModel(updatedModel);
-
           await assetsAudioPlayer.open(
             updatedModel.audio,
             showNotification: true,
           );
 
-          emit(AudioPlayerPlayingState(updatedList, updatedModel));
+          emit(AudioPlayerPlayingState(updatedNewList, updatedModel));
         }
       },
     );

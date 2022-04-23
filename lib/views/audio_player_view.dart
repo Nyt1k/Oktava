@@ -1,8 +1,10 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
+import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/audio_track_widget.dart';
 import 'package:oktava/utilities/widgets/player_widget.dart';
 
@@ -13,11 +15,14 @@ class AudioPlayerView extends StatefulWidget {
   State<AudioPlayerView> createState() => _AudioPlayerViewState();
 }
 
+AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
+
 class _AudioPlayerViewState extends State<AudioPlayerView> {
   @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
+      color: secondaryColor,
       child: BlocBuilder<AudioPlayerBloc, AudioPlayerState>(
         builder: (context, state) {
           if (state is AudioPlayerInitialState) {
@@ -69,7 +74,9 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
 Widget buildReadyTrackList(AudioPlayerReadyState state) {
   return ListView.builder(
     itemBuilder: (context, index) {
-      return AudioTrackWidget(audioPlayerModel: state.entityList[index]);
+      return AudioTrackWidget(
+        audioPlayerModel: state.entityList[index],
+      );
     },
     itemCount: state.entityList.length,
   );
@@ -85,7 +92,9 @@ Widget buildPlayingTrackList(AudioPlayerPlayingState state) {
         child: ListView.builder(
           padding: const EdgeInsets.only(bottom: 124),
           itemBuilder: (context, index) {
-            return AudioTrackWidget(audioPlayerModel: state.entityList[index]);
+            return AudioTrackWidget(
+              audioPlayerModel: state.entityList[index],
+            );
           },
           itemCount: state.entityList.length,
         ),
@@ -108,7 +117,9 @@ Widget buildPausedTrackList(AudioPlayerPausedState state) {
         child: ListView.builder(
           padding: const EdgeInsets.only(bottom: 96),
           itemBuilder: (context, index) {
-            return AudioTrackWidget(audioPlayerModel: state.entityList[index]);
+            return AudioTrackWidget(
+              audioPlayerModel: state.entityList[index],
+            );
           },
           itemCount: state.entityList.length,
         ),

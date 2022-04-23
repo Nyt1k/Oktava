@@ -4,6 +4,7 @@ import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
+import 'package:oktava/utilities/constants/color_constants.dart';
 
 class PlayerWidget extends StatelessWidget {
   const PlayerWidget({Key? key}) : super(key: key);
@@ -31,34 +32,70 @@ class PlayerWidget extends StatelessWidget {
   }
 
   Widget _showPlayer(BuildContext context, AudioPlayerModel model) {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Container(
-            color: Colors.grey.shade200,
-            child: ListTile(
-              leading: setLeading(model),
-              title: setTitle(model),
-              subtitle: setSubTitle(model),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
-              trailing: IconButton(
-                icon: setIcon(model),
-                onPressed: setCallBack(context, model),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Container(
+          decoration: const BoxDecoration(
+            color: additionalColor,
+            boxShadow: [
+              BoxShadow(
+                color: secondaryColor,
+                blurRadius: 4,
+                offset: Offset(0, -0.2),
               ),
+            ],
+          ),
+          child: ListTile(
+            leading: setLeading(model),
+            title: setTitle(model),
+            subtitle: setSubTitle(model),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  color: mainColor,
+                  icon: const Icon(
+                    Icons.skip_previous_rounded,
+                    size: 35,
+                  ),
+                ),
+                IconButton(
+                  icon: setIcon(model),
+                  color: mainColor,
+                  onPressed: setCallBack(context, model),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  color: mainColor,
+                  icon: const Icon(
+                    Icons.skip_next_rounded,
+                    size: 35,
+                  ),
+                ),
+              ],
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 
   Widget setIcon(AudioPlayerModel model) {
     if (model.isPlaying) {
-      return const Icon(Icons.pause);
+      return const Icon(
+        Icons.pause_circle_filled_rounded,
+        size: 35,
+      );
     } else {
-      return const Icon(Icons.play_arrow);
+      return const Icon(
+        Icons.play_circle_fill_rounded,
+        size: 35,
+      );
     }
   }
 
@@ -67,11 +104,17 @@ class PlayerWidget extends StatelessWidget {
   }
 
   Widget setTitle(AudioPlayerModel model) {
-    return Text(model.audio.metas.title!);
+    return Text(
+      model.audio.metas.title!,
+      style: const TextStyle(color: mainColor),
+    );
   }
 
   Widget setSubTitle(AudioPlayerModel model) {
-    return Text(model.audio.metas.artist!);
+    return Text(
+      model.audio.metas.artist!,
+      style: const TextStyle(color: mainColor),
+    );
   }
 
   void Function() setCallBack(BuildContext context, AudioPlayerModel model) {
