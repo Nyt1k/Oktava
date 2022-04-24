@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:oktava/firebase_options.dart';
@@ -14,10 +15,10 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> createUser({
-    required String email,
-    required String password,
-  }) async {
+  Future<AuthUser> createUser(
+      {required String email,
+      required String password,
+      String? userName}) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -25,6 +26,12 @@ class FirebaseAuthProvider implements AuthProvider {
       );
       final user = currentUser;
       if (user != null) {
+        await createAlreadyAuthUser(
+          userId: currentUser!.id,
+          email: user.email,
+          isVerified: user.isEmailVerified,
+          userName: userName,
+        );
         return user;
       } else {
         throw UserNotLoggedInAuthException();
@@ -119,5 +126,32 @@ class FirebaseAuthProvider implements AuthProvider {
     } catch (_) {
       throw GenericAuthException();
     }
+  }
+
+  // storage AuthUser
+
+  final FirebaseFirestore users = FirebaseFirestore.instance;
+
+  Future<void> createAlreadyAuthUser(
+      {required String userId,
+      required String email,
+      required bool isVerified,
+      String? userName}) async {
+    await users.collection('users').doc(userId).set({
+      'email': email,
+      'isVerified': isVerified,
+      'userName': userName,
+    });
+  }
+
+  @override
+  Future<AuthUser> getAlreadyAuthUser({required String userId}) async {
+    var user = await users.collection('users').doc(userId).get();
+    AuthUser currentUser = AuthUser(
+        id: userId,
+        email: user.data()!['email'],
+        isEmailVerified: user.data()!['isVerified'],
+        userName: user.data()!['userName']);
+    return currentUser;
   }
 }

@@ -17,11 +17,13 @@ class RegisterView extends StatefulWidget {
 class _RegisterViewState extends State<RegisterView> {
   late final TextEditingController _email;
   late final TextEditingController _password;
+  late final TextEditingController _userName;
 
   @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
+    _userName = TextEditingController();
     super.initState();
   }
 
@@ -29,6 +31,7 @@ class _RegisterViewState extends State<RegisterView> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _userName.dispose();
     super.dispose();
   }
 
@@ -59,6 +62,12 @@ class _RegisterViewState extends State<RegisterView> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text('Enter email and password to register.'),
             TextField(
+              controller: _userName,
+              enableSuggestions: false,
+              autocorrect: false,
+              decoration: const InputDecoration(hintText: 'User Name'),
+            ),
+            TextField(
               controller: _email,
               autocorrect: false,
               keyboardType: TextInputType.emailAddress,
@@ -78,9 +87,11 @@ class _RegisterViewState extends State<RegisterView> {
                     onPressed: () async {
                       final email = _email.text;
                       final password = _password.text;
+                      var userName = _userName.text;
                       context.read<AuthBloc>().add(AuthEventRegister(
                             email,
                             password,
+                            userName,
                           ));
                     },
                     child: const Text('Register'),

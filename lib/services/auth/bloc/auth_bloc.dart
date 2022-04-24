@@ -17,8 +17,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
+    on<AuthEventGetUser>(
+      (event, emit) async {
+        try {
+          final userId = event.userId;
+          final user = await provider.getAlreadyAuthUser(userId: userId);
+          emit(AuthStateGetUser(
+            exception: null,
+            user: user,
+            isLoading: false,
+          ));
+        } on Exception catch (e) {
+          final userId = event.userId;
+          final user = await provider.getAlreadyAuthUser(userId: userId);
+          emit(AuthStateGetUser(
+            exception: e,
+            user: user,
+            isLoading: false,
+          ));
+        }
+      },
+    );
 
-  
     on<AuthEventForgotPassword>(
       (event, emit) async {
         emit(const AuthStateForgotPassword(
@@ -67,10 +87,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (event, emit) async {
         final email = event.email;
         final password = event.password;
+        final userName = event.userName;
         try {
           await provider.createUser(
             email: email,
             password: password,
+            userName: userName,
           );
           await provider.sendEmailVerification();
           emit(const AuthStateNeedsVerification(isLoading: false));
