@@ -18,7 +18,8 @@ class FirebaseAuthProvider implements AuthProvider {
   Future<AuthUser> createUser(
       {required String email,
       required String password,
-      String? userName}) async {
+      String? userName,
+      String? userProfileImage}) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -31,6 +32,7 @@ class FirebaseAuthProvider implements AuthProvider {
           email: user.email,
           isVerified: user.isEmailVerified,
           userName: userName,
+          userProfileImage: userProfileImage,
         );
         return user;
       } else {
@@ -130,28 +132,69 @@ class FirebaseAuthProvider implements AuthProvider {
 
   // storage AuthUser
 
-  final FirebaseFirestore users = FirebaseFirestore.instance;
+  final FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
 
   Future<void> createAlreadyAuthUser(
       {required String userId,
       required String email,
       required bool isVerified,
-      String? userName}) async {
-    await users.collection('users').doc(userId).set({
+      String? userName,
+      String? userProfileImage}) async {
+    await firebaseInstance.collection('users').doc(userId).set({
       'email': email,
       'isVerified': isVerified,
       'userName': userName,
+      'userProfileImage': userProfileImage,
     });
   }
 
   @override
   Future<AuthUser> getAlreadyAuthUser({required String userId}) async {
-    var user = await users.collection('users').doc(userId).get();
-    AuthUser currentUser = AuthUser(
-        id: userId,
-        email: user.data()!['email'],
-        isEmailVerified: user.data()!['isVerified'],
-        userName: user.data()!['userName']);
+    var user = await firebaseInstance.collection('users').doc(userId).get();
+    AuthUser currentUser = AuthUser.fromSnapshot(user);
     return currentUser;
+  }
+
+  @override
+  Future<void> updateAuthUSer({
+    required String userId,
+    String? userName,
+    bool? isVerified,
+    String? userProfileImage,
+  }) async {
+    if (isVerified != null && userName != null && userProfileImage != null) {
+      await firebaseInstance.collection('users').doc(userId).update({
+        'isVerified': isVerified,
+        'userName': userName,
+        'userProfileImage': userProfileImage,
+      });
+    } else if (isVerified != null && userName != null) {
+      await firebaseInstance.collection('users').doc(userId).update({
+        'isVerified': isVerified,
+        'userName': userName,
+      });
+    } else if (userName != null && userProfileImage != null) {
+      await firebaseInstance.collection('users').doc(userId).update({
+        'userName': userName,
+        'userProfileImage': userProfileImage,
+      });
+    } else if (userProfileImage != null && isVerified != null) {
+      await firebaseInstance.collection('users').doc(userId).update({
+        'isVerified': isVerified,
+        'userProfileImage': userProfileImage,
+      });
+    } else if (userName != null) {
+      await firebaseInstance.collection('users').doc(userId).update({
+        'userName': userName,
+      });
+    } else if (isVerified != null) {
+      await firebaseInstance.collection('users').doc(userId).update({
+        'isVerified': isVerified,
+      });
+    } else {
+      await firebaseInstance.collection('users').doc(userId).update({
+        'userProfileImage': userProfileImage,
+      });
+    }
   }
 }

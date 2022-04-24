@@ -87,7 +87,7 @@ class _RegisterViewState extends State<RegisterView> {
                     onPressed: () async {
                       final email = _email.text;
                       final password = _password.text;
-                      var userName = _userName.text;
+                      final userName = _userName.text;
                       context.read<AuthBloc>().add(AuthEventRegister(
                             email,
                             password,

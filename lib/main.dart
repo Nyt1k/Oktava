@@ -95,6 +95,8 @@ class HomePage extends StatelessWidget {
           return const ForgotPasswordView();
         } else if (state is AuthStateRegistering) {
           return const RegisterView();
+        } else if (state is AuthStateGetUser) {
+          return const MainScreen();
         } else {
           return const Scaffold(
             body: CircularProgressIndicator(),
@@ -113,18 +115,11 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  String get userId => AuthService.firebase().currentUser!.id;
 
   @override
   Widget build(BuildContext context) {
+    context.read<AuthBloc>().add(AuthEventGetUser(userId));
     return Scaffold(
         drawer: const NavigationDrawerWidget(),
         appBar: AppBar(

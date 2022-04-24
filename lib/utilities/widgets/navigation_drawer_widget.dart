@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oktava/data/repository/user_profile_image_factory.dart';
 import 'package:oktava/main.dart';
 import 'package:oktava/services/auth/auth_service.dart';
 import 'package:oktava/services/auth/auth_user.dart';
@@ -229,110 +230,105 @@ class NavigationDrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const urlImage = 'assets/images/country.jpg';
-    return BlocProvider(
-      create: (context) =>
-          AuthBloc(FirebaseAuthProvider())..add(AuthEventGetUser(userId)),
-      child: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state is AuthStateGetUser) {
-            return SizedBox(
-              width: 250,
-              child: Drawer(
-                child: Material(
-                  color: mainColor,
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: <Widget>[
-                      buildHeader(
-                        urlImage: urlImage,
-                        user: state.user,
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthStateGetUser) {
+          return SizedBox(
+            width: 250,
+            child: Drawer(
+              child: Material(
+                color: mainColor,
+                child: ListView(
+                  // padding: const EdgeInsets.symmetric(horizontal: 20),
+                  children: <Widget>[
+                    buildHeader(
+                      user: state.user,
+                      onTap: () => selectedItem(context, 7),
+                    ),
+                    Container(
+                      padding: padding,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          buildMenuItem(
+                            text: 'All songs',
+                            icon: Icons.music_note_outlined,
+                            onClicked: () => selectedItem(context, 0),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          buildMenuItem(
+                            text: 'Albums',
+                            icon: Icons.album_rounded,
+                            onClicked: () => selectedItem(context, 1),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          buildMenuItem(
+                            text: 'Artists',
+                            icon: Icons.people_outline_rounded,
+                            onClicked: () => selectedItem(context, 2),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          buildMenuItem(
+                            text: 'Genres',
+                            icon: Icons.graphic_eq_rounded,
+                            onClicked: () => selectedItem(context, 3),
+                          ),
+                          const SizedBox(
+                            height: 32,
+                          ),
+                          Container(
+                              height: 2,
+                              decoration: const BoxDecoration(
+                                  color: additionalColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10)))),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          buildMenuItem(
+                            text: 'Upload',
+                            icon: Icons.cloud_upload_rounded,
+                            onClicked: () => selectedItem(context, 4),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          buildMenuItem(
+                            text: 'Settings',
+                            icon: Icons.settings,
+                            onClicked: () => selectedItem(context, 5),
+                          ),
+                          const SizedBox(
+                            height: 16,
+                          ),
+                          buildMenuItem(
+                            text: 'Log out',
+                            icon: Icons.logout_rounded,
+                            onClicked: () => selectedItem(context, 6),
+                          ),
+                        ],
                       ),
-                      Container(
-                        padding: padding,
-                        child: Column(
-                          children: [
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            buildMenuItem(
-                              text: 'All songs',
-                              icon: Icons.music_note_outlined,
-                              onClicked: () => selectedItem(context, 0),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            buildMenuItem(
-                              text: 'Albums',
-                              icon: Icons.album_rounded,
-                              onClicked: () => selectedItem(context, 1),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            buildMenuItem(
-                              text: 'Artists',
-                              icon: Icons.people_outline_rounded,
-                              onClicked: () => selectedItem(context, 2),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            buildMenuItem(
-                              text: 'Genres',
-                              icon: Icons.graphic_eq_rounded,
-                              onClicked: () => selectedItem(context, 3),
-                            ),
-                            const SizedBox(
-                              height: 32,
-                            ),
-                            Container(
-                                height: 2,
-                                decoration: const BoxDecoration(
-                                    color: additionalColor,
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)))),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            buildMenuItem(
-                              text: 'Upload',
-                              icon: Icons.cloud_upload_rounded,
-                              onClicked: () => selectedItem(context, 4),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            buildMenuItem(
-                              text: 'Settings',
-                              icon: Icons.settings,
-                              onClicked: () => selectedItem(context, 5),
-                            ),
-                            const SizedBox(
-                              height: 16,
-                            ),
-                            buildMenuItem(
-                              text: 'Log out',
-                              icon: Icons.logout_rounded,
-                              onClicked: () => selectedItem(context, 6),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 
@@ -361,7 +357,7 @@ class NavigationDrawerWidget extends StatelessWidget {
   }
 
   selectedItem(BuildContext context, int index) async {
-    //Navigator.of(context).pop();
+    Navigator.of(context).pop();
     switch (index) {
       case 0:
         Navigator.of(context).push(MaterialPageRoute(
@@ -378,44 +374,58 @@ class NavigationDrawerWidget extends StatelessWidget {
     }
   }
 
-  buildHeader({required String urlImage, required AuthUser? user}) => InkWell(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 40),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 30,
-                backgroundColor: additionalColor,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: Image.asset(urlImage),
+  buildHeader({required AuthUser? user, VoidCallback? onTap}) => InkWell(
+        child: InkWell(
+          splashColor: subColor,
+          onTap: onTap,
+          child: Ink(
+            color: additionalColor,
+            padding: const EdgeInsets.symmetric(vertical: 30),
+            child: Row(
+              children: [
+                const SizedBox(
+                  width: 20,
                 ),
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user!.userName!,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      color: secondaryColor,
+                CircleAvatar(
+                  radius: 30.0,
+                  backgroundColor: subColor,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Image.asset(
+                      UserProfileImagePlayerFactory.getUserProfileImage(
+                          user!.userProfileImage!),
+                      width: 55,
+                      height: 55,
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  Text(
-                    user.email,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                      fontSize: 10,
-                      color: secondaryColor,
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.userName!,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        color: mainColor,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    Text(
+                      user.email,
+                      overflow: TextOverflow.fade,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: subColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       );

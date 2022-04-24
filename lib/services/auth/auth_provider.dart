@@ -10,10 +10,19 @@ abstract class AuthProvider {
   });
 
   Future<AuthUser> createUser(
-      {required String email, required String password, String? userName});
+      {required String email,
+      required String password,
+      String? userName,
+      String? userProfileImage});
 
   Future<void> logOut();
   Future<void> sendEmailVerification();
   Future<void> sendPasswordReset({required String toEmail});
   Future<AuthUser> getAlreadyAuthUser({required String userId});
+  Future<void> updateAuthUSer({
+    required String userId,
+    String? userName,
+    bool? isVerified,
+    String? userProfileImage,
+  });
 }

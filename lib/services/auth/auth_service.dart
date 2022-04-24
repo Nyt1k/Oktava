@@ -13,6 +13,7 @@ class AuthService implements AuthProvider {
     required String email,
     required String password,
     String? userName,
+    String? userProfileImage,
   }) =>
       provider.createUser(
         email: email,
@@ -45,4 +46,17 @@ class AuthService implements AuthProvider {
   @override
   Future<AuthUser> getAlreadyAuthUser({required String userId}) =>
       provider.getAlreadyAuthUser(userId: userId);
+
+  @override
+  Future<void> updateAuthUSer(
+          {required String userId,
+          String? userName,
+          bool? isVerified,
+          String? userProfileImage}) =>
+      provider.updateAuthUSer(
+        userId: userId,
+        userName: userName,
+        isVerified: isVerified,
+        userProfileImage: userProfileImage,
+      );
 }
