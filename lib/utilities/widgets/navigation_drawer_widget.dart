@@ -7,9 +7,9 @@ import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';
-import 'package:oktava/services/auth/firebase_auth_provider.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/dialogs/logout_dialogs.dart';
+import 'package:oktava/views/user_profile_view.dart';
 
 // class NavigationDrawerWidget extends StatefulWidget {
 //   const NavigationDrawerWidget({Key? key}) : super(key: key);
@@ -243,7 +243,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                   children: <Widget>[
                     buildHeader(
                       user: state.user,
-                      onTap: () => selectedItem(context, 7),
+                      onTap: () => selectedItem(context, 0, state.user),
                     ),
                     Container(
                       padding: padding,
@@ -255,7 +255,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                           buildMenuItem(
                             text: 'All songs',
                             icon: Icons.music_note_outlined,
-                            onClicked: () => selectedItem(context, 0),
+                            onClicked: () => selectedItem(context, 1, null),
                           ),
                           const SizedBox(
                             height: 16,
@@ -263,7 +263,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                           buildMenuItem(
                             text: 'Albums',
                             icon: Icons.album_rounded,
-                            onClicked: () => selectedItem(context, 1),
+                            onClicked: () => selectedItem(context, 2, null),
                           ),
                           const SizedBox(
                             height: 16,
@@ -271,7 +271,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                           buildMenuItem(
                             text: 'Artists',
                             icon: Icons.people_outline_rounded,
-                            onClicked: () => selectedItem(context, 2),
+                            onClicked: () => selectedItem(context, 3, null),
                           ),
                           const SizedBox(
                             height: 16,
@@ -279,7 +279,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                           buildMenuItem(
                             text: 'Genres',
                             icon: Icons.graphic_eq_rounded,
-                            onClicked: () => selectedItem(context, 3),
+                            onClicked: () => selectedItem(context, 4, null),
                           ),
                           const SizedBox(
                             height: 32,
@@ -299,7 +299,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                           buildMenuItem(
                             text: 'Upload',
                             icon: Icons.cloud_upload_rounded,
-                            onClicked: () => selectedItem(context, 4),
+                            onClicked: () => selectedItem(context, 5, null),
                           ),
                           const SizedBox(
                             height: 16,
@@ -307,7 +307,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                           buildMenuItem(
                             text: 'Settings',
                             icon: Icons.settings,
-                            onClicked: () => selectedItem(context, 5),
+                            onClicked: () => selectedItem(context, 6, null),
                           ),
                           const SizedBox(
                             height: 16,
@@ -315,7 +315,8 @@ class NavigationDrawerWidget extends StatelessWidget {
                           buildMenuItem(
                             text: 'Log out',
                             icon: Icons.logout_rounded,
-                            onClicked: () => selectedItem(context, 6),
+                            onClicked: () =>
+                                selectedItem(context, 7, state.user),
                           ),
                         ],
                       ),
@@ -330,6 +331,31 @@ class NavigationDrawerWidget extends StatelessWidget {
         }
       },
     );
+  }
+
+  selectedItem(BuildContext context, int index, AuthUser? user) async {
+   // Navigator.of(context).pop();
+    switch (index) {
+      case 0:
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => UserProfileView(
+            user: user!,
+          ),
+        ));
+        break;
+      case 1:
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const HomePage(),
+        ));
+        break;
+      case 7:
+        final shouldLogOut = await showLogOutDialog(context);
+        if (shouldLogOut) {
+          context.read<AuthBloc>().add(
+                const AuthEventLogOut(),
+              );
+        }
+    }
   }
 
   buildMenuItem({
@@ -354,24 +380,6 @@ class NavigationDrawerWidget extends StatelessWidget {
       hoverColor: hoverColor,
       onTap: onClicked,
     );
-  }
-
-  selectedItem(BuildContext context, int index) async {
-    Navigator.of(context).pop();
-    switch (index) {
-      case 0:
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const HomePage(),
-        ));
-        break;
-      case 6:
-        final shouldLogOut = await showLogOutDialog(context);
-        if (shouldLogOut) {
-          context.read<AuthBloc>().add(
-                const AuthEventLogOut(),
-              );
-        }
-    }
   }
 
   buildHeader({required AuthUser? user, VoidCallback? onTap}) => InkWell(

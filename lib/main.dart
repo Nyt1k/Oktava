@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:oktava/data/repository/audio_player_model_factory.dart';
 import 'package:oktava/data/repository/audio_player_provider.dart';
 import 'package:oktava/data/repository/local_audio_player_service.dart';
@@ -62,7 +63,12 @@ class App extends StatelessWidget {
                     RepositoryProvider.of<AudioPlayerProvider>(context)),
           )
         ],
-        child: const MaterialApp(home: HomePage()),
+        child: MaterialApp(
+          home: const HomePage(),
+          theme: ThemeData(
+            textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),
+          ),
+        ),
       ),
     );
   }

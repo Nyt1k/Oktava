@@ -5,7 +5,7 @@ Future<void> showPasswordResetSendDialog(BuildContext context) {
   return showGenericDialog(
     context: context,
     title: 'Password reset',
-    content: 'Now we sent you a password reset link on email',
+    content: const Text('Now we sent you a password reset link on email'),
     optionBuilder: () => {
       'OK': null,
     },
