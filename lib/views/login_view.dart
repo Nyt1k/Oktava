@@ -58,7 +58,6 @@ class _LoginViewState extends State<LoginView> {
               TextField(
                 controller: _email,
                 autocorrect: false,
-                autofocus: true,
                 keyboardType: TextInputType.emailAddress,
                 decoration: const InputDecoration(hintText: 'Email'),
               ),

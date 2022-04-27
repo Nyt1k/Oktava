@@ -126,30 +126,42 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(AuthEventGetUser(userId));
-    return Scaffold(
-        drawer: const NavigationDrawerWidget(),
-        appBar: AppBar(
-          elevation: 0,
-          leading: Builder(builder: (context) {
-            return IconButton(
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: secondaryColor,
-              ),
-            );
-          }),
-          centerTitle: true,
-          title: const Text(
-            "OKTAVA",
-            style: TextStyle(
-              color: secondaryColor,
+    // Navigator.pop(context);
+    return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
+      if (state is AuthStateGetUser) {
+        return Scaffold(
+            drawer: NavigationDrawerWidget(
+              user: state.user,
             ),
-          ),
-          backgroundColor: mainColor,
-        ),
-        body: const AudioPlayerView());
+            appBar: AppBar(
+              elevation: 0,
+              leading: Builder(builder: (context) {
+                return IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios_new_rounded,
+                    color: secondaryColor,
+                  ),
+                );
+              }),
+              centerTitle: true,
+              title: const Text(
+                "OKTAVA",
+                style: TextStyle(
+                  color: secondaryColor,
+                ),
+              ),
+              backgroundColor: mainColor,
+            ),
+            body: const AudioPlayerView());
+      }
+      if (state is AuthStateLoggedOut) {
+        return const HomePage();
+      } else {
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      }
+    });
   }
 }

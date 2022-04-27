@@ -223,118 +223,123 @@ import 'package:oktava/views/user_profile_view.dart';
 // }
 
 class NavigationDrawerWidget extends StatelessWidget {
-  const NavigationDrawerWidget({Key? key}) : super(key: key);
+  final AuthUser user;
+  const NavigationDrawerWidget({Key? key, required this.user})
+      : super(
+          key: key,
+        );
 
   String get userId => AuthService.firebase().currentUser!.id;
   final padding = const EdgeInsets.symmetric(horizontal: 20);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthStateGetUser) {
-          return SizedBox(
-            width: 250,
-            child: Drawer(
-              child: Material(
-                color: mainColor,
-                child: ListView(
-                  // padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: <Widget>[
-                    buildHeader(
-                      user: state.user,
-                      onTap: () => selectedItem(context, 0, state.user),
+    return SizedBox(
+      width: 250,
+      child: Drawer(
+        child: Material(
+          color: mainColor,
+          child: ListView(
+            // padding: const EdgeInsets.symmetric(horizontal: 20),
+            children: <Widget>[
+              buildHeader(
+                user: user,
+                onTap: () => selectedItem(context, 0, user),
+              ),
+              Container(
+                padding: padding,
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    buildMenuItem(
+                      text: 'All songs',
+                      icon: Icons.music_note_outlined,
+                      onClicked: () => selectedItem(context, 1, null),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    buildMenuItem(
+                      text: 'Albums',
+                      icon: Icons.album_rounded,
+                      onClicked: () => selectedItem(context, 2, null),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    buildMenuItem(
+                      text: 'Artists',
+                      icon: Icons.people_outline_rounded,
+                      onClicked: () => selectedItem(context, 3, null),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    buildMenuItem(
+                      text: 'Genres',
+                      icon: Icons.graphic_eq_rounded,
+                      onClicked: () => selectedItem(context, 4, null),
+                    ),
+                    const SizedBox(
+                      height: 32,
                     ),
                     Container(
-                      padding: padding,
-                      child: Column(
-                        children: [
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          buildMenuItem(
-                            text: 'All songs',
-                            icon: Icons.music_note_outlined,
-                            onClicked: () => selectedItem(context, 1, null),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          buildMenuItem(
-                            text: 'Albums',
-                            icon: Icons.album_rounded,
-                            onClicked: () => selectedItem(context, 2, null),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          buildMenuItem(
-                            text: 'Artists',
-                            icon: Icons.people_outline_rounded,
-                            onClicked: () => selectedItem(context, 3, null),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          buildMenuItem(
-                            text: 'Genres',
-                            icon: Icons.graphic_eq_rounded,
-                            onClicked: () => selectedItem(context, 4, null),
-                          ),
-                          const SizedBox(
-                            height: 32,
-                          ),
-                          Container(
-                              height: 2,
-                              decoration: const BoxDecoration(
-                                  color: additionalColor,
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)))),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          buildMenuItem(
-                            text: 'Upload',
-                            icon: Icons.cloud_upload_rounded,
-                            onClicked: () => selectedItem(context, 5, null),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          buildMenuItem(
-                            text: 'Settings',
-                            icon: Icons.settings,
-                            onClicked: () => selectedItem(context, 6, null),
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          buildMenuItem(
-                            text: 'Log out',
-                            icon: Icons.logout_rounded,
-                            onClicked: () =>
-                                selectedItem(context, 7, state.user),
-                          ),
-                        ],
-                      ),
-                    )
+                        height: 2,
+                        decoration: const BoxDecoration(
+                            color: additionalColor,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)))),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    buildMenuItem(
+                      text: 'Upload',
+                      icon: Icons.cloud_upload_rounded,
+                      onClicked: () => selectedItem(context, 5, null),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    buildMenuItem(
+                      text: 'Settings',
+                      icon: Icons.settings,
+                      onClicked: () => selectedItem(context, 6, null),
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    buildMenuItem(
+                      text: 'Log out',
+                      icon: Icons.logout_rounded,
+                      onClicked: () async {
+                        final shouldLogOut = await showLogOutDialog(context);
+
+                        if (shouldLogOut) {
+                          context.read<AuthBloc>().add(
+                                const AuthEventLogOut(),
+                              );
+                        }
+                        Navigator.pop(context);
+                        //selectedItem(context, 7, user);
+                      },
+                    ),
                   ],
                 ),
-              ),
-            ),
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   selectedItem(BuildContext context, int index, AuthUser? user) async {
-   // Navigator.of(context).pop();
+    Navigator.of(context).pop();
     switch (index) {
       case 0:
         Navigator.of(context).push(MaterialPageRoute(
@@ -349,12 +354,6 @@ class NavigationDrawerWidget extends StatelessWidget {
         ));
         break;
       case 7:
-        final shouldLogOut = await showLogOutDialog(context);
-        if (shouldLogOut) {
-          context.read<AuthBloc>().add(
-                const AuthEventLogOut(),
-              );
-        }
     }
   }
 

@@ -69,3 +69,5 @@ class AuthStateGetUser extends AuthState {
     required bool isLoading,
   }) : super(isLoading: isLoading);
 }
+
+

@@ -1,3 +1,5 @@
+import 'package:oktava/services/auth/auth_user.dart';
+
 abstract class AuthEvent {
   const AuthEvent();
 }
@@ -43,4 +45,12 @@ class AuthEventGetUser extends AuthEvent {
   final String userId;
 
   AuthEventGetUser(this.userId);
+}
+
+class AuthEventUpdateUser extends AuthEvent {
+  final String userId;
+  final String? userName;
+  final String? userProfileImage;
+
+  AuthEventUpdateUser(this.userName, this.userProfileImage, this.userId);
 }

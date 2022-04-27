@@ -119,6 +119,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
+    on<AuthEventUpdateUser>((event, emit) async {
+      await provider.updateAuthUSer(
+        userId: event.userId,
+        userName: event.userName,
+        userProfileImage: event.userProfileImage,
+      );
+      emit(state);
+    });
+
     on<AuthEventInitialize>(
       (event, emit) async {
         await provider.initialize();

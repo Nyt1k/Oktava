@@ -30,56 +30,56 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthBloc, AuthState>(listener: (context, state) async {
-      if (state is AuthStateForgotPassword) {
-        if (state.hasSendEmail) {
-          _controller.clear();
-          await showPasswordResetSendDialog(context);
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) async {
+        if (state is AuthStateForgotPassword) {
+          if (state.hasSendEmail) {
+            _controller.clear();
+            await showPasswordResetSendDialog(context);
+          }
+          if (state.exception != null) {
+            await showErrorDialog(context,
+                'We could`n process your request, please try again or create new user account');
+          }
         }
-        if (state.exception != null) {
-          await showErrorDialog(context,
-              'We could`n process your request, please try again or create new user account');
-        }
-      }
-    },
-    child: Scaffold(
-      appBar: AppBar(
-        title: const Text('Restore password'),
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Restore password'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Text(
+                  'Enter you email and we will send you password reset mail.'),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                autocorrect: false,
+                controller: _controller,
+                decoration: const InputDecoration(
+                  hintText: 'Your email address...',
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  final email = _controller.text;
+                  context
+                      .read<AuthBloc>()
+                      .add(AuthEventForgotPassword(email: email));
+                },
+                child: const Text('Send me password'),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthEventLogOut());
+                },
+                child: const Text('Back to login page'),
+              ),
+            ],
+          ),
+        ),
       ),
-      body:Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-              children: [
-                const Text(
-                    'Enter you email and we will send you password reset mail.'),
-                TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  autocorrect: false,
-                  autofocus: true,
-                  controller: _controller,
-                  decoration: const InputDecoration(
-                    hintText: 'Your email address...',
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {
-                    final email = _controller.text;
-                    context
-                        .read<AuthBloc>()
-                        .add(AuthEventForgotPassword(email: email));
-                  },
-                  child: const Text('Send me password'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    context.read<AuthBloc>().add(const AuthEventLogOut());
-                  },
-                  child: const Text('Back to login page'),
-                ),
-              ],
-            ),
-      ),
-    ),
     );
   }
 }
