@@ -58,12 +58,10 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             filled: true,
           ),
           style: const TextStyle(color: mainColor),
-          onChanged: (String name) {
-            if (name != null) {
-              context
-                  .read<AuthBloc>()
-                  .add(AuthEventUpdateUser(name, null, widget.userId));
-            }
+          onChanged: (name) {
+            context
+                .read<AuthBloc>()
+                .add(AuthEventUpdateUser(name, null, widget.userId));
           },
         ),
 

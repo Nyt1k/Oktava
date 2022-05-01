@@ -25,7 +25,7 @@ class _UserProfileViewState extends State<UserProfileView> {
 
   @override
   void initState() {
-    controller = TextEditingController();
+    controller = TextEditingController(text: widget.user.email);
     super.initState();
   }
 

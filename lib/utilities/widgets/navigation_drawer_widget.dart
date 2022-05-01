@@ -9,6 +9,7 @@ import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/dialogs/logout_dialogs.dart';
+import 'package:oktava/views/upload_song_view.dart';
 import 'package:oktava/views/user_profile_view.dart';
 
 // class NavigationDrawerWidget extends StatefulWidget {
@@ -324,7 +325,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                                 const AuthEventLogOut(),
                               );
                         }
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
                         //selectedItem(context, 7, user);
                       },
                     ),
@@ -339,7 +340,7 @@ class NavigationDrawerWidget extends StatelessWidget {
   }
 
   selectedItem(BuildContext context, int index, AuthUser? user) async {
-    Navigator.of(context).pop();
+    Navigator.pop(context);
     switch (index) {
       case 0:
         Navigator.of(context).push(MaterialPageRoute(
@@ -353,7 +354,10 @@ class NavigationDrawerWidget extends StatelessWidget {
           builder: (context) => const HomePage(),
         ));
         break;
-      case 7:
+      case 5:
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => const UploadSongView(),
+        ));
     }
   }
 

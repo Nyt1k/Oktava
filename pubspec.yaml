@@ -48,6 +48,8 @@ dependencies:
   assets_audio_player: ^3.0.4+1
   flutter_media_metadata: ^1.0.0
   google_fonts: ^2.3.2
+  file_picker: ^4.5.1
+  firebase_storage: ^10.2.14
 
 dev_dependencies:
   flutter_test:
