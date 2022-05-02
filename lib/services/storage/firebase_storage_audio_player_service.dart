@@ -1,17 +1,14 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/data/repository/audio_player_provider.dart';
+import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 
 class FirebaseStorageAudioPlayerService implements AudioPlayerProvider {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
   late List<AudioPlayerModel> audioPlayerModels;
 
   @override
   Future<void> init() async {
-    final snapshot = await _db.collection('songs').get();
-    audioPlayerModels = snapshot.docs
-        .map((snap) => AudioPlayerModel.fromDocumentSnapshot(snap))
-        .toList();
+    audioPlayerModels =
+        await StorageAudioPlayerFactory().getModelsFromStorage();
   }
 
   @override

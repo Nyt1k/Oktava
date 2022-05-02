@@ -93,6 +93,7 @@ class AudioTrackWidget extends StatelessWidget {
   }
 
   Widget setSubTitle() {
+    
     return Text(
       audioPlayerModel.audio.metas.artist!,
       style: const TextStyle(color: mainColor),

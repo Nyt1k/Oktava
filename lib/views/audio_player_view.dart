@@ -2,7 +2,6 @@ import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
-import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/audio_track_widget.dart';
@@ -27,8 +26,8 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
       child: BlocBuilder<AudioPlayerBloc, AudioPlayerState>(
         builder: (context, state) {
           if (state is AudioPlayerInitialState) {
-            BlocProvider.of<AudioPlayerBloc>(context)
-                .add(const InitializeAudioPlayerEvent());
+            // BlocProvider.of<AudioPlayerBloc>(context)
+            //     .add(const InitializeAudioPlayerEvent());
             return buildCircularProgress();
           } else if (state is AudioPlayerReadyState) {
             return buildReadyTrackList(state);
