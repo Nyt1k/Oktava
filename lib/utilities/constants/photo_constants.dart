@@ -1,0 +1,1 @@
+const String defaultSongImage ='https://firebasestorage.googleapis.com/v0/b/oktava-streaming-service.appspot.com/o/images%2FnoteSelected.png?alt=media&token=4188a71e-2700-4665-ab6d-9b660a0f6d0b';

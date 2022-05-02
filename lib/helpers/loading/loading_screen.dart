@@ -64,7 +64,9 @@ class LoadingScreen {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 10),
-                        const CircularProgressIndicator(),
+                        const CircularProgressIndicator(
+                          color: mainColor,
+                        ),
                         const SizedBox(height: 10),
                         StreamBuilder(
                           stream: _text.stream,

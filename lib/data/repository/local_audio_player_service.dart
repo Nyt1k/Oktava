@@ -35,4 +35,10 @@ class LocalAudioPlayerService implements AudioPlayerProvider {
     )] = updateModel;
     return Future.value(audioPlayerModels);
   }
+
+  @override
+  Future<void> init() {
+    // TODO: implement init
+    throw UnimplementedError();
+  }
 }

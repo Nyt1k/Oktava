@@ -47,7 +47,7 @@ class _UserProfileViewState extends State<UserProfileView> {
           color: mainColor,
           onPressed: () {
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const MainScreen()));
+                MaterialPageRoute(builder: (context) => const HomePage()));
           },
         ),
         title: const Text(
@@ -81,7 +81,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                       context.read<AuthBloc>().add(
                           AuthEventUpdateUser(null, result, widget.user.id));
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => const MainScreen()));
+                          builder: (context) => const HomePage()));
                     }
                   },
                   child: Stack(

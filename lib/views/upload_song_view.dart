@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/main.dart';
 import 'package:oktava/services/auth/auth_service.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
+import 'package:oktava/utilities/constants/photo_constants.dart';
+import 'package:oktava/utilities/dialogs/loading_dialog.dart';
 
 class UploadSongView extends StatefulWidget {
   const UploadSongView({Key? key}) : super(key: key);
@@ -20,7 +21,7 @@ class _UploadSongViewState extends State<UploadSongView> {
   TextEditingController songTags = TextEditingController();
   TextEditingController songText = TextEditingController();
   var songUrl;
-  var songImage;
+  String songImage = '';
   late Reference storageRef;
   final FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
 
@@ -36,7 +37,7 @@ class _UploadSongViewState extends State<UploadSongView> {
           color: mainColor,
           onPressed: () {
             Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const MainScreen()));
+                MaterialPageRoute(builder: (context) => const HomePage()));
           },
         ),
         title: const Text(
@@ -83,8 +84,10 @@ class _UploadSongViewState extends State<UploadSongView> {
                         )),
                         InkWell(
                           onTap: () async {
+                            showLoadingDialog(context, 'Selecting song');
                             var song = await selectSong();
                             songUrl = song;
+                            Navigator.pop(context);
                           },
                           splashColor: mainColor,
                         ),
@@ -104,7 +107,7 @@ class _UploadSongViewState extends State<UploadSongView> {
                 ),
                 SizedBox(
                   width: 300,
-                  height: 100,
+                  height: 300,
                   child: Ink(
                     decoration: BoxDecoration(
                       color: secondaryColor,
@@ -113,6 +116,14 @@ class _UploadSongViewState extends State<UploadSongView> {
                           color: mainColor,
                           width: 2.0,
                           style: BorderStyle.solid),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(songImage.isNotEmpty
+                            ? songImage
+                            : defaultSongImage),
+                        colorFilter: ColorFilter.mode(
+                            Colors.white.withOpacity(0.6), BlendMode.dstATop),
+                      ),
                     ),
                     child: Stack(
                       children: [
@@ -124,10 +135,14 @@ class _UploadSongViewState extends State<UploadSongView> {
                         )),
                         InkWell(
                           onTap: () async {
+                            showLoadingDialog(context, 'Selecting Image');
                             final image = await selectImage();
+
                             if (image != null) {
                               songImage = image;
+                              setState(() {});
                             }
+                            Navigator.pop(context);
                           },
                           splashColor: mainColor,
                         ),
@@ -135,20 +150,6 @@ class _UploadSongViewState extends State<UploadSongView> {
                     ),
                   ),
                 ),
-                FutureBuilder<String?>(
-                    future: selectImage(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        return Image.network(
-                          snapshot.data!,
-                          fit: BoxFit.contain,
-                        );
-                      } else {
-                        return Container(
-                          height: 200,
-                        );
-                      }
-                    }),
                 const SizedBox(
                   height: 16,
                 ),
@@ -266,7 +267,9 @@ class _UploadSongViewState extends State<UploadSongView> {
                           primary: mainColor,
                         ),
                         onPressed: () async {
+                          showLoadingDialog(context, 'Saving song');
                           await saveSong();
+                          Navigator.pop(context);
                         },
                         child: const Text(
                           'Upload song',

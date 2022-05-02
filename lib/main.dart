@@ -4,18 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oktava/data/repository/audio_player_model_factory.dart';
 import 'package:oktava/data/repository/audio_player_provider.dart';
-import 'package:oktava/data/repository/local_audio_player_service.dart';
 import 'package:oktava/firebase_options.dart';
 import 'package:oktava/helpers/loading/loading_screen.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
+import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/auth/auth_service.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';
 import 'package:oktava/services/auth/firebase_auth_provider.dart';
+import 'package:oktava/services/storage/firebase_storage_audio_player_service.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
+import 'package:oktava/utilities/widgets/custom_progress_indicator.dart';
 import 'package:oktava/utilities/widgets/navigation_drawer_widget.dart';
 import 'package:oktava/views/audio_player_view.dart';
 import 'package:oktava/views/forgot_password_view.dart';
@@ -46,10 +47,13 @@ class App extends StatelessWidget {
     ]);
     return MultiRepositoryProvider(
       providers: [
+        // RepositoryProvider<AudioPlayerProvider>(
+        //   create: (context) => LocalAudioPlayerService(
+        //       audioPlayerModels: AudioPlayerModelFactory.getAudioModels()),
+        // ),
         RepositoryProvider<AudioPlayerProvider>(
-          create: (context) => LocalAudioPlayerService(
-              audioPlayerModels: AudioPlayerModelFactory.getAudioModels()),
-        ),
+          create: (context) => FirebaseStorageAudioPlayerService(),
+        )
       ],
       child: MultiBlocProvider(
         providers: [
@@ -104,9 +108,9 @@ class HomePage extends StatelessWidget {
         } else if (state is AuthStateGetUser) {
           return const MainScreen();
         } else {
-          return const Scaffold(
-            body: CircularProgressIndicator(),
-          );
+          return Scaffold(
+              backgroundColor: additionalColor,
+              body: customCircularIndicator());
         }
       },
     );
@@ -125,6 +129,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<AudioPlayerBloc>(context)
+        .add(const InitializeAudioPlayerEvent());
     context.read<AuthBloc>().add(AuthEventGetUser(userId));
     // Navigator.pop(context);
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -160,7 +166,10 @@ class _MainScreenState extends State<MainScreen> {
       if (state is AuthStateLoggedOut) {
         return const HomePage();
       } else {
-        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        return Scaffold(
+          backgroundColor: additionalColor,
+          body: customCircularIndicator(),
+        );
       }
     });
   }

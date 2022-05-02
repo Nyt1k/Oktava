@@ -6,6 +6,7 @@ import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/audio_track_widget.dart';
+import 'package:oktava/utilities/widgets/custom_progress_indicator.dart';
 import 'package:oktava/utilities/widgets/player_widget.dart';
 
 class AudioPlayerView extends StatefulWidget {
@@ -133,9 +134,7 @@ Widget buildPausedTrackList(AudioPlayerPausedState state) {
 }
 
 Widget buildCircularProgress() {
-  return const Center(
-    child: CircularProgressIndicator(),
-  );
+  return customCircularIndicator();
 }
 
 Widget buildUnknownStateError() {

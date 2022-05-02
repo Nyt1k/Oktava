@@ -1,5 +1,7 @@
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:oktava/utilities/constants/photo_constants.dart';
 
 class AudioPlayerModel extends Equatable {
   final String id;
@@ -28,4 +30,24 @@ class AudioPlayerModel extends Equatable {
   AudioPlayerModel copyWithIsPlaying(bool isPlaying) {
     return AudioPlayerModel(id: id, audio: audio, isPlaying: isPlaying);
   }
+
+  factory AudioPlayerModel.fromDocumentSnapshot(
+          DocumentSnapshot<Map<String, dynamic>> snapshot) =>
+      AudioPlayerModel(
+        id: snapshot.id,
+        audio: Audio(
+          snapshot.data()!['song_url'],
+          metas: Metas(
+            id: snapshot.id,
+            title: snapshot.data()!['song_name'],
+            artist: snapshot.data()!['song_owner'],
+            album: snapshot.data()!['song_album'],
+            image: MetasImage.network(snapshot.data()!['song_image']),
+            onImageLoadFail: const MetasImage.network(defaultSongImage),
+          ),
+        ),
+        isPlaying: false,
+        songTags: snapshot.data()!['song_tags'],
+        songText: snapshot.data()!['song_text'],
+      );
 }

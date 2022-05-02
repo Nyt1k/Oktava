@@ -100,7 +100,16 @@ class PlayerWidget extends StatelessWidget {
   }
 
   Widget setLeading(AudioPlayerModel model) {
-    return Image.asset(model.audio.metas.image!.path);
+    return SizedBox(
+      width: 60,
+      height: 60,
+      child: Image.network(
+        model.audio.metas.image!.path.isNotEmpty
+            ? model.audio.metas.image!.path
+            : model.audio.metas.onImageLoadFail!.path,
+        fit: BoxFit.cover,
+      ),
+    );
   }
 
   Widget setTitle(AudioPlayerModel model) {

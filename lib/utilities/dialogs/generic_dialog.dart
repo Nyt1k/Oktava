@@ -5,7 +5,7 @@ typedef DialogOptionBuilder<T> = Map<String, T?> Function();
 
 Future<T?> showGenericDialog<T>({
   required BuildContext context,
-  required String title,
+  required String? title,
   required Widget content,
   required DialogOptionBuilder optionBuilder,
 }) {
@@ -17,7 +17,7 @@ Future<T?> showGenericDialog<T>({
         backgroundColor: additionalColor,
         title: Center(
           child: Text(
-            title,
+            title!,
             style: const TextStyle(color: mainColor),
           ),
         ),

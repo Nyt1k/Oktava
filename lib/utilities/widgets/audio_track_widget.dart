@@ -71,10 +71,17 @@ class AudioTrackWidget extends StatelessWidget {
   }
 
   Widget setLeading() {
-    return Image.asset(
-      audioPlayerModel.audio.metas.image!.path,
-      color: Colors.white.withOpacity(0.6),
-      colorBlendMode: BlendMode.modulate,
+    return SizedBox(
+      width: 60,
+      height: 60,
+      child: Image.network(
+        audioPlayerModel.audio.metas.image!.path.isNotEmpty
+            ? audioPlayerModel.audio.metas.image!.path
+            : audioPlayerModel.audio.metas.onImageLoadFail!.path,
+        color: Colors.white.withOpacity(0.6),
+        colorBlendMode: BlendMode.modulate,
+        fit: BoxFit.cover,
+      ),
     );
   }
 

@@ -27,6 +27,22 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
     on<InitializeAudioPlayerEvent>(
       (event, emit) async {
+        if (state is AudioPlayerPlayingState) {
+          assetsAudioPlayer.stop();
+          final List<AudioPlayerModel> currentList =
+              await audioPlayerProvider.getAll();
+          AudioPlayerModel currentlyPlaying =
+              currentList.firstWhere((element) => element.isPlaying == true);
+          currentlyPlaying.copyWithIsPlaying(false);
+          final List<AudioPlayerModel> updatedList = currentList
+              .map((audioModel) =>
+                  audioModel.audio.metas.id == currentlyPlaying.id
+                      ? audioModel.copyWithIsPlaying(false)
+                      : audioModel)
+              .toList();
+          await audioPlayerProvider.updateAllModels(updatedList);
+        }
+        await audioPlayerProvider.init();
         final audioList = await audioPlayerProvider.getAll();
         emit(AudioPlayerReadyState(audioList));
       },
@@ -92,7 +108,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
               await audioPlayerProvider.updateModel(updatedModel);
 
           await assetsAudioPlayer.open(
-            updatedModel.audio,
+            Audio.network(updatedModel.audio.path),
             showNotification: true,
           );
 
@@ -114,7 +130,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
             final updatedList =
                 await audioPlayerProvider.updateModel(updatedModel);
             await assetsAudioPlayer.open(
-              updatedModel.audio,
+              Audio.network(updatedModel.audio.path),
               showNotification: true,
               respectSilentMode: true,
               headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
@@ -143,7 +159,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
           final updatedNewList =
               await audioPlayerProvider.updateModel(updatedModel);
           await assetsAudioPlayer.open(
-            updatedModel.audio,
+            Audio.network(updatedModel.audio.path),
             showNotification: true,
           );
 
