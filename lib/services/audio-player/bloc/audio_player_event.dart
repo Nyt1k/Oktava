@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 
 @immutable
@@ -13,14 +12,27 @@ class InitializeAudioPlayerEvent extends AudioPlayerEvent {
 
 class TriggeredPlayAudioPlayerEvent extends AudioPlayerEvent {
   final AudioPlayerModel audioPlayerModel;
+  final BuildContext context;
 
-  const TriggeredPlayAudioPlayerEvent(this.audioPlayerModel);
+  const TriggeredPlayAudioPlayerEvent(this.audioPlayerModel, this.context);
 }
 
 class TriggeredPauseAudioPlayerEvent extends AudioPlayerEvent {
   final AudioPlayerModel audioPlayerModel;
 
   const TriggeredPauseAudioPlayerEvent(this.audioPlayerModel);
+}
+
+class TriggeredNextAudioPlayerEvent extends AudioPlayerEvent {
+  final AudioPlayerModel audioPlayerModel;
+
+  const TriggeredNextAudioPlayerEvent(this.audioPlayerModel);
+}
+
+class TriggeredPrevAudioPlayerEvent extends AudioPlayerEvent {
+  final AudioPlayerModel audioPlayerModel;
+
+  const TriggeredPrevAudioPlayerEvent(this.audioPlayerModel);
 }
 
 class AudioPlayedAudioPlayerEvent extends AudioPlayerEvent {

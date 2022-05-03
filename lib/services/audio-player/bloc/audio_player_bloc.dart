@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/data/repository/audio_player_provider.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
@@ -101,9 +101,9 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
     on<TriggeredPlayAudioPlayerEvent>(
       (event, emit) async {
+        AudioPlayerModel updatedModel =
+            event.audioPlayerModel.copyWithIsPlaying(true);
         if (state is AudioPlayerReadyState) {
-          final AudioPlayerModel updatedModel =
-              event.audioPlayerModel.copyWithIsPlaying(true);
           final updatedList =
               await audioPlayerProvider.updateModel(updatedModel);
 
@@ -113,11 +113,17 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
           );
 
           emit(AudioPlayerPlayingState(updatedList, updatedModel));
+
+          // assetsAudioPlayer.playlistAudioFinished.listen((event) async {
+          //   await assetsAudioPlayer.open(
+          //     Audio.network(updatedModel.audio.path),
+          //     showNotification: true,
+          //   );
+          // });
+          // emit(AudioPlayerPlayingState(updatedList, updatedModel));
         } else if (state is AudioPlayerPausedState) {
           if (event.audioPlayerModel.id ==
               (state as AudioPlayerPausedState).pausedEntity.id) {
-            final AudioPlayerModel updatedModel =
-                event.audioPlayerModel.copyWithIsPlaying(true);
             final updatedList =
                 await audioPlayerProvider.updateModel(updatedModel);
 
@@ -125,8 +131,6 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
             emit(AudioPlayerPlayingState(updatedList, updatedModel));
           } else {
-            final AudioPlayerModel updatedModel =
-                event.audioPlayerModel.copyWithIsPlaying(true);
             final updatedList =
                 await audioPlayerProvider.updateModel(updatedModel);
             await assetsAudioPlayer.open(
@@ -154,8 +158,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
           emit(AudioPlayerPausedState(updatedList, currentlyPlaying));
 
-          final AudioPlayerModel updatedModel =
-              event.audioPlayerModel.copyWithIsPlaying(true);
+          updatedModel = event.audioPlayerModel.copyWithIsPlaying(true);
           final updatedNewList =
               await audioPlayerProvider.updateModel(updatedModel);
           await assetsAudioPlayer.open(
@@ -165,6 +168,10 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
           emit(AudioPlayerPlayingState(updatedNewList, updatedModel));
         }
+        assetsAudioPlayer.playlistAudioFinished.listen((n) async {
+          BlocProvider.of<AudioPlayerBloc>(event.context)
+              .add(TriggeredNextAudioPlayerEvent(updatedModel));
+        });
       },
     );
 
@@ -177,6 +184,100 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
         await assetsAudioPlayer.pause();
 
         emit(AudioPlayerPausedState(updatedList, updatedModel));
+      },
+    );
+
+    on<TriggeredPrevAudioPlayerEvent>(
+      (event, emit) async {
+        int index = -1;
+        final List<AudioPlayerModel> currentList =
+            await audioPlayerProvider.getAll();
+        if (state is AudioPlayerPlayingState) {
+          final List<AudioPlayerModel> currentList =
+              await audioPlayerProvider.getAll();
+          AudioPlayerModel currentlyPlaying =
+              currentList.firstWhere((element) => element.isPlaying == true);
+          index =
+              currentList.indexWhere((element) => element.isPlaying == true);
+          currentlyPlaying.copyWithIsPlaying(false);
+          final List<AudioPlayerModel> updatedList = currentList
+              .map((audioModel) =>
+                  audioModel.audio.metas.id == currentlyPlaying.id
+                      ? audioModel.copyWithIsPlaying(false)
+                      : audioModel)
+              .toList();
+          await audioPlayerProvider.updateAllModels(updatedList);
+
+          emit(AudioPlayerPausedState(updatedList, currentlyPlaying));
+        } else if (state is AudioPlayerPausedState) {
+          if (event.audioPlayerModel.id ==
+              (state as AudioPlayerPausedState).pausedEntity.id) {
+            index = currentList.indexWhere(
+                (element) => element.id == event.audioPlayerModel.id);
+          }
+        }
+
+        if (index - 1 < 0) {
+          index = currentList.length;
+        }
+        final AudioPlayerModel updatedModel =
+            currentList[index - 1].copyWithIsPlaying(true);
+        final updatedNewList =
+            await audioPlayerProvider.updateModel(updatedModel);
+
+        await assetsAudioPlayer.open(
+          Audio.network(currentList[index - 1].audio.path),
+          showNotification: true,
+        );
+
+        emit(AudioPlayerPlayingState(updatedNewList, updatedModel));
+      },
+    );
+
+    on<TriggeredNextAudioPlayerEvent>(
+      (event, emit) async {
+        int index = -1;
+        final List<AudioPlayerModel> currentList =
+            await audioPlayerProvider.getAll();
+        if (state is AudioPlayerPlayingState) {
+          final List<AudioPlayerModel> currentList =
+              await audioPlayerProvider.getAll();
+          AudioPlayerModel currentlyPlaying =
+              currentList.firstWhere((element) => element.isPlaying == true);
+          index =
+              currentList.indexWhere((element) => element.isPlaying == true);
+          currentlyPlaying.copyWithIsPlaying(false);
+          final List<AudioPlayerModel> updatedList = currentList
+              .map((audioModel) =>
+                  audioModel.audio.metas.id == currentlyPlaying.id
+                      ? audioModel.copyWithIsPlaying(false)
+                      : audioModel)
+              .toList();
+          await audioPlayerProvider.updateAllModels(updatedList);
+
+          emit(AudioPlayerPausedState(updatedList, currentlyPlaying));
+        } else if (state is AudioPlayerPausedState) {
+          if (event.audioPlayerModel.id ==
+              (state as AudioPlayerPausedState).pausedEntity.id) {
+            index = currentList.indexWhere(
+                (element) => element.id == event.audioPlayerModel.id);
+          }
+        }
+
+        if (index + 1 > currentList.length) {
+          index = -1;
+        }
+        final AudioPlayerModel updatedModel =
+            currentList[index + 1].copyWithIsPlaying(true);
+        final updatedNewList =
+            await audioPlayerProvider.updateModel(updatedModel);
+
+        await assetsAudioPlayer.open(
+          Audio.network(currentList[index + 1].audio.path),
+          showNotification: true,
+        );
+
+        emit(AudioPlayerPlayingState(updatedNewList, updatedModel));
       },
     );
   }

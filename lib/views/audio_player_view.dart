@@ -18,6 +18,7 @@ class AudioPlayerView extends StatefulWidget {
 AssetsAudioPlayer assetsAudioPlayer = AssetsAudioPlayer();
 
 class _AudioPlayerViewState extends State<AudioPlayerView> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,6 +39,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
           } else {
             return buildUnknownStateError();
           }
+          
         },
       ),
     );

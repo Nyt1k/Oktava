@@ -93,7 +93,6 @@ class AudioTrackWidget extends StatelessWidget {
   }
 
   Widget setSubTitle() {
-    
     return Text(
       audioPlayerModel.audio.metas.artist!,
       style: const TextStyle(color: mainColor),
@@ -118,7 +117,7 @@ class AudioTrackWidget extends StatelessWidget {
     } else {
       return () {
         BlocProvider.of<AudioPlayerBloc>(context)
-            .add(TriggeredPlayAudioPlayerEvent(audioPlayerModel));
+            .add(TriggeredPlayAudioPlayerEvent(audioPlayerModel, context));
       };
     }
   }

@@ -5,6 +5,7 @@ import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
+import 'package:oktava/views/audio_player_view.dart';
 
 class PlayerWidget extends StatelessWidget {
   const PlayerWidget({Key? key}) : super(key: key);
@@ -57,12 +58,12 @@ class PlayerWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                  onPressed: () {},
                   color: mainColor,
                   icon: const Icon(
                     Icons.skip_previous_rounded,
                     size: 35,
                   ),
+                  onPressed: setPrevCallBack(context, model),
                 ),
                 IconButton(
                   icon: setIcon(model),
@@ -70,7 +71,7 @@ class PlayerWidget extends StatelessWidget {
                   onPressed: setCallBack(context, model),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  onPressed: setNextCallBack(context, model),
                   color: mainColor,
                   icon: const Icon(
                     Icons.skip_next_rounded,
@@ -84,59 +85,73 @@ class PlayerWidget extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget setIcon(AudioPlayerModel model) {
-    if (model.isPlaying) {
-      return const Icon(
-        Icons.pause_circle_filled_rounded,
-        size: 35,
-      );
-    } else {
-      return const Icon(
-        Icons.play_circle_fill_rounded,
-        size: 35,
-      );
-    }
-  }
-
-  Widget setLeading(AudioPlayerModel model) {
-    return SizedBox(
-      width: 60,
-      height: 60,
-      child: Image.network(
-        model.audio.metas.image!.path.isNotEmpty
-            ? model.audio.metas.image!.path
-            : model.audio.metas.onImageLoadFail!.path,
-        fit: BoxFit.cover,
-      ),
+Widget setIcon(AudioPlayerModel model) {
+  if (model.isPlaying) {
+    return const Icon(
+      Icons.pause_circle_filled_rounded,
+      size: 35,
+    );
+  } else {
+    return const Icon(
+      Icons.play_circle_fill_rounded,
+      size: 35,
     );
   }
+}
 
-  Widget setTitle(AudioPlayerModel model) {
-    return Text(
-      model.audio.metas.title!,
-      style: const TextStyle(color: mainColor),
-    );
-  }
+Widget setLeading(AudioPlayerModel model) {
+  return SizedBox(
+    width: 60,
+    height: 60,
+    child: Image.network(
+      model.audio.metas.image!.path.isNotEmpty
+          ? model.audio.metas.image!.path
+          : model.audio.metas.onImageLoadFail!.path,
+      fit: BoxFit.cover,
+    ),
+  );
+}
 
-  Widget setSubTitle(AudioPlayerModel model) {
-    return Text(
-      model.audio.metas.artist!,
-      style: const TextStyle(color: mainColor),
-    );
-  }
+Widget setTitle(AudioPlayerModel model) {
+  return Text(
+    model.audio.metas.title!,
+    style: const TextStyle(color: mainColor),
+  );
+}
 
-  void Function() setCallBack(BuildContext context, AudioPlayerModel model) {
-    if (model.isPlaying) {
-      return () {
-        BlocProvider.of<AudioPlayerBloc>(context)
-            .add(TriggeredPauseAudioPlayerEvent(model));
-      };
-    } else {
-      return () {
-        BlocProvider.of<AudioPlayerBloc>(context)
-            .add(TriggeredPlayAudioPlayerEvent(model));
-      };
-    }
+Widget setSubTitle(AudioPlayerModel model) {
+  return Text(
+    model.audio.metas.artist!,
+    style: const TextStyle(color: mainColor),
+  );
+}
+
+void Function() setCallBack(BuildContext context, AudioPlayerModel model) {
+  if (model.isPlaying) {
+    return () {
+      BlocProvider.of<AudioPlayerBloc>(context)
+          .add(TriggeredPauseAudioPlayerEvent(model));
+    };
+  } else {
+    return () {
+      BlocProvider.of<AudioPlayerBloc>(context)
+          .add(TriggeredPlayAudioPlayerEvent(model,context));
+    };
   }
+}
+
+void Function() setPrevCallBack(BuildContext context, AudioPlayerModel model) {
+  return () {
+    BlocProvider.of<AudioPlayerBloc>(context)
+        .add(TriggeredPrevAudioPlayerEvent(model));
+  };
+}
+
+void Function() setNextCallBack(BuildContext context, AudioPlayerModel model) {
+  return () {
+    BlocProvider.of<AudioPlayerBloc>(context)
+        .add(TriggeredNextAudioPlayerEvent(model));
+  };
 }
