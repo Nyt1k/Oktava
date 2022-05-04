@@ -5,7 +5,7 @@ import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
-import 'package:oktava/views/audio_player_view.dart';
+import 'package:oktava/views/full_player_view.dart';
 
 class PlayerWidget extends StatelessWidget {
   const PlayerWidget({Key? key}) : super(key: key);
@@ -20,11 +20,11 @@ class PlayerWidget extends StatelessWidget {
         }
 
         if (state is AudioPlayerPlayingState) {
-          return _showPlayer(context, state.playingEntity);
+          return _showPlayer(context, state.playingEntity, state.entityList);
         }
 
         if (state is AudioPlayerPausedState) {
-          return _showPlayer(context, state.pausedEntity);
+          return _showPlayer(context, state.pausedEntity, state.entityList);
         } else {
           return const SizedBox.shrink();
         }
@@ -32,7 +32,7 @@ class PlayerWidget extends StatelessWidget {
     );
   }
 
-  Widget _showPlayer(BuildContext context, AudioPlayerModel model) {
+  Widget _showPlayer(BuildContext context, AudioPlayerModel model, List<AudioPlayerModel> models) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -47,38 +47,44 @@ class PlayerWidget extends StatelessWidget {
               ),
             ],
           ),
-          child: ListTile(
-            leading: setLeading(model),
-            title: setTitle(model),
-            subtitle: setSubTitle(model),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                  color: mainColor,
-                  icon: const Icon(
-                    Icons.skip_previous_rounded,
-                    size: 35,
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => FullPlayerView(models: models)));
+            },
+            child: ListTile(
+              leading: setLeading(model),
+              title: setTitle(model),
+              subtitle: setSubTitle(model),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    color: mainColor,
+                    icon: const Icon(
+                      Icons.skip_previous_rounded,
+                      size: 35,
+                    ),
+                    onPressed: setPrevCallBack(context, model),
                   ),
-                  onPressed: setPrevCallBack(context, model),
-                ),
-                IconButton(
-                  icon: setIcon(model),
-                  color: mainColor,
-                  onPressed: setCallBack(context, model),
-                ),
-                IconButton(
-                  onPressed: setNextCallBack(context, model),
-                  color: mainColor,
-                  icon: const Icon(
-                    Icons.skip_next_rounded,
-                    size: 35,
+                  IconButton(
+                    icon: setIcon(model),
+                    color: mainColor,
+                    onPressed: setCallBack(context, model),
                   ),
-                ),
-              ],
+                  IconButton(
+                    onPressed: setNextCallBack(context, model),
+                    color: mainColor,
+                    icon: const Icon(
+                      Icons.skip_next_rounded,
+                      size: 35,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         )
@@ -137,7 +143,7 @@ void Function() setCallBack(BuildContext context, AudioPlayerModel model) {
   } else {
     return () {
       BlocProvider.of<AudioPlayerBloc>(context)
-          .add(TriggeredPlayAudioPlayerEvent(model,context));
+          .add(TriggeredPlayAudioPlayerEvent(model, context));
     };
   }
 }

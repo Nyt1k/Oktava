@@ -2,7 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/main.dart';
+import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
+import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/auth/auth_service.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/constants/photo_constants.dart';
@@ -36,6 +39,8 @@ class _UploadSongViewState extends State<UploadSongView> {
           hoverColor: mainColor,
           color: mainColor,
           onPressed: () {
+            BlocProvider.of<AudioPlayerBloc>(context)
+                .add(const InitializeAudioPlayerEvent());
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const HomePage()));
           },

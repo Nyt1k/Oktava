@@ -129,8 +129,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<AudioPlayerBloc>(context)
-        .add(const InitializeAudioPlayerEvent());
     context.read<AuthBloc>().add(AuthEventGetUser(userId));
     // Navigator.pop(context);
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {

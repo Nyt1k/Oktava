@@ -17,18 +17,22 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     required this.assetsAudioPlayer,
     required this.audioPlayerProvider,
   }) : super(const AudioPlayerInitialState()) {
-    // playerSubscriptions.add(
-    //   assetsAudioPlayer.playerState.listen(
-    //     (event) {
-    //       _mapPlayerStateToEvent(event);
-    //     },
-    //   ),
-    // );
+    playerSubscriptions.add(
+      assetsAudioPlayer.playlistAudioFinished.listen(
+        (event) async {
+          final List<AudioPlayerModel> currentList =
+              await audioPlayerProvider.getAll();
+          AudioPlayerModel currentlyPlaying =
+              currentList.firstWhere((element) => element.isPlaying == true);
+
+          add(TriggeredNextAudioPlayerEvent(currentlyPlaying));
+        },
+      ),
+    );
 
     on<InitializeAudioPlayerEvent>(
       (event, emit) async {
         if (state is AudioPlayerPlayingState) {
-          assetsAudioPlayer.stop();
           final List<AudioPlayerModel> currentList =
               await audioPlayerProvider.getAll();
           AudioPlayerModel currentlyPlaying =
@@ -41,6 +45,9 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
                       : audioModel)
               .toList();
           await audioPlayerProvider.updateAllModels(updatedList);
+
+          await assetsAudioPlayer.stop();
+          emit(AudioPlayerReadyState(updatedList));
         }
         await audioPlayerProvider.init();
         final audioList = await audioPlayerProvider.getAll();
@@ -168,10 +175,6 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
           emit(AudioPlayerPlayingState(updatedNewList, updatedModel));
         }
-        assetsAudioPlayer.playlistAudioFinished.listen((n) async {
-          BlocProvider.of<AudioPlayerBloc>(event.context)
-              .add(TriggeredNextAudioPlayerEvent(updatedModel));
-        });
       },
     );
 
@@ -264,7 +267,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
           }
         }
 
-        if (index + 1 > currentList.length) {
+        if (index + 1 >= currentList.length) {
           index = -1;
         }
         final AudioPlayerModel updatedModel =
@@ -323,7 +326,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
   //   } else if (playerState == PlayerState.pause) {
   //     add(AudioPausedAudioPlayerEvent(
   //         assetsAudioPlayer.current.value?.audio.audio.metas.id));
-  //   } else if (playerState == PlayerState.stop) {
+  //   } else if (playerState == PlayerState.play) {
   //     add(AudioPlayedAudioPlayerEvent(
   //         assetsAudioPlayer.current.value?.audio.audio.metas.id));
   //   }
