@@ -88,14 +88,14 @@ class AudioTrackWidget extends StatelessWidget {
   Widget setTitle() {
     return Text(
       audioPlayerModel.audio.metas.title!,
-      style: const TextStyle(color: mainColor),
+      style: const TextStyle(color: mainColor, fontSize: 20),
     );
   }
 
   Widget setSubTitle() {
     return Text(
       audioPlayerModel.audio.metas.artist!,
-      style: const TextStyle(color: mainColor),
+      style: TextStyle(color: mainColor.withAlpha(180)),
     );
   }
 

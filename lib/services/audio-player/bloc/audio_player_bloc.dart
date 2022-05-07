@@ -17,18 +17,18 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     required this.assetsAudioPlayer,
     required this.audioPlayerProvider,
   }) : super(const AudioPlayerInitialState()) {
-    playerSubscriptions.add(
-      assetsAudioPlayer.playlistAudioFinished.listen(
-        (event) async {
-          final List<AudioPlayerModel> currentList =
-              await audioPlayerProvider.getAll();
-          AudioPlayerModel currentlyPlaying =
-              currentList.firstWhere((element) => element.isPlaying == true);
-
-          add(TriggeredNextAudioPlayerEvent(currentlyPlaying));
-        },
-      ),
-    );
+    // playerSubscriptions.add(
+    //   assetsAudioPlayer.playlistAudioFinished.listen(
+    //     (event) async {
+    //       final List<AudioPlayerModel> currentList =
+    //           await audioPlayerProvider.getAll();
+    //       AudioPlayerModel currentlyPlaying =
+    //           currentList.firstWhere((element) => element.isPlaying == true);
+          
+    //       add(TriggeredNextAudioPlayerEvent(currentlyPlaying));
+    //     },
+    //   ),
+    // );
 
     on<InitializeAudioPlayerEvent>(
       (event, emit) async {
@@ -121,13 +121,6 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
           emit(AudioPlayerPlayingState(updatedList, updatedModel));
 
-          // assetsAudioPlayer.playlistAudioFinished.listen((event) async {
-          //   await assetsAudioPlayer.open(
-          //     Audio.network(updatedModel.audio.path),
-          //     showNotification: true,
-          //   );
-          // });
-          // emit(AudioPlayerPlayingState(updatedList, updatedModel));
         } else if (state is AudioPlayerPausedState) {
           if (event.audioPlayerModel.id ==
               (state as AudioPlayerPausedState).pausedEntity.id) {
