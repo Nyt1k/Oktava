@@ -60,7 +60,9 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
               min: 0,
               max: widget.duration.inMilliseconds.toDouble(),
               value: percent * widget.duration.inMilliseconds.toDouble(),
-              activeColor: mainColor,
+              activeColor:mainColor.withAlpha(200),
+              thumbColor: mainColor,
+              inactiveColor: secondaryColor,
               onChanged: (newValue) {
                 setState(() {
                   final to = Duration(milliseconds: newValue.floor());

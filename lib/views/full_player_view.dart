@@ -9,7 +9,7 @@ import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
-import 'package:oktava/utilities/widgets/PositionSeekWidget.dart';
+import 'package:oktava/utilities/widgets/position_seek_widget.dart';
 import 'package:oktava/utilities/widgets/playing_controls_widget.dart';
 
 class FullPlayerView extends StatefulWidget {

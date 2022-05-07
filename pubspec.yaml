@@ -50,6 +50,7 @@ dependencies:
   google_fonts: ^2.3.2
   file_picker: ^4.5.1
   firebase_storage: ^10.2.14
+  gif_view: ^0.0.1
 
 dev_dependencies:
   flutter_test:

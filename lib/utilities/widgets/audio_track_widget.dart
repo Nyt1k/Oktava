@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart';
+import 'package:gif_view/gif_view.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
@@ -37,8 +38,6 @@ class AudioTrackWidget extends StatelessWidget {
                 setLeading(),
                 SizedBox(
                   child: setIcon(),
-                  width: 60,
-                  height: 60,
                 ),
               ],
             ),
@@ -56,16 +55,23 @@ class AudioTrackWidget extends StatelessWidget {
 
   Widget setIcon() {
     if (audioPlayerModel.isPlaying) {
-      return const Icon(
-        Icons.pause_circle_filled_rounded,
+      return GifView.asset(
+        'assets/images/equalizer.gif',
+        frameRate: 10,
         color: mainColor,
-        size: 34,
+        width: 60,
+        height: 40,
+        fit: BoxFit.contain,
       );
     } else {
-      return const Icon(
-        Icons.play_circle_fill_rounded,
-        color: mainColor,
-        size: 34,
+      return const SizedBox(
+        width: 60,
+        height: 60,
+        child: Icon(
+          Icons.play_circle_fill_rounded,
+          color: mainColor,
+          size: 34,
+        ),
       );
     }
   }
