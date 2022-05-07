@@ -9,6 +9,7 @@ import 'package:oktava/firebase_options.dart';
 import 'package:oktava/helpers/loading/loading_screen.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
+import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
 import 'package:oktava/services/auth/auth_service.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
@@ -18,6 +19,7 @@ import 'package:oktava/services/storage/firebase_storage_audio_player_service.da
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/custom_progress_indicator.dart';
 import 'package:oktava/utilities/widgets/navigation_drawer_widget.dart';
+import 'package:oktava/views/albums_view.dart';
 import 'package:oktava/views/audio_player_view.dart';
 import 'package:oktava/views/forgot_password_view.dart';
 import 'package:oktava/views/login_view.dart';
@@ -134,32 +136,33 @@ class _MainScreenState extends State<MainScreen> {
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthStateGetUser) {
         return Scaffold(
-            drawer: NavigationDrawerWidget(
-              user: state.user,
-            ),
-            appBar: AppBar(
-              elevation: 0,
-              leading: Builder(builder: (context) {
-                return IconButton(
-                  onPressed: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    color: secondaryColor,
-                  ),
-                );
-              }),
-              centerTitle: true,
-              title: const Text(
-                "OKTAVA",
-                style: TextStyle(
+          drawer: NavigationDrawerWidget(
+            user: state.user,
+          ),
+          appBar: AppBar(
+            elevation: 0,
+            leading: Builder(builder: (context) {
+              return IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
                   color: secondaryColor,
                 ),
+              );
+            }),
+            centerTitle: true,
+            title: const Text(
+              "OKTAVA",
+              style: TextStyle(
+                color: secondaryColor,
               ),
-              backgroundColor: mainColor,
             ),
-            body: const AudioPlayerView());
+            backgroundColor: mainColor,
+          ),
+          body: const AudioPlayerView(),
+        );
       }
       if (state is AuthStateLoggedOut) {
         return const HomePage();

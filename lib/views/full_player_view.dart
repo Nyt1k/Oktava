@@ -115,8 +115,6 @@ class _FullPlayerViewState extends State<FullPlayerView> {
             padding: const EdgeInsets.only(bottom: 28.0),
             child: Center(
               child: Column(
-                // mainAxisSize: MainAxisSize.max,
-                // crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Stack(
                     fit: StackFit.passthrough,

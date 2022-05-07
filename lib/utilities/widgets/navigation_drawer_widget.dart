@@ -1,14 +1,17 @@
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oktava/data/repository/audio_player_provider.dart';
 import 'package:oktava/data/repository/user_profile_image_factory.dart';
 import 'package:oktava/main.dart';
 import 'package:oktava/services/auth/auth_service.dart';
 import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
-import 'package:oktava/services/auth/bloc/auth_state.dart';
+import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/dialogs/logout_dialogs.dart';
+import 'package:oktava/views/albums_view.dart';
 import 'package:oktava/views/upload_song_view.dart';
 import 'package:oktava/views/user_profile_view.dart';
 
@@ -340,6 +343,7 @@ class NavigationDrawerWidget extends StatelessWidget {
   }
 
   selectedItem(BuildContext context, int index, AuthUser? user) async {
+    final list = await StorageAudioPlayerFactory().getModelsFromStorage();
     Navigator.pop(context);
     switch (index) {
       case 0:
@@ -352,6 +356,11 @@ class NavigationDrawerWidget extends StatelessWidget {
       case 1:
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const HomePage(),
+        ));
+        break;
+      case 2:
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => AlbumsView(models: list,),
         ));
         break;
       case 5:
