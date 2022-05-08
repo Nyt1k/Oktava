@@ -40,7 +40,7 @@ class _UploadSongViewState extends State<UploadSongView> {
           color: mainColor,
           onPressed: () {
             BlocProvider.of<AudioPlayerBloc>(context)
-                .add(const InitializeAudioPlayerEvent());
+                .add(const InitializeAudioPlayerEvent(null));
             Navigator.of(context).push(
                 MaterialPageRoute(builder: (context) => const HomePage()));
           },

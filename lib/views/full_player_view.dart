@@ -13,10 +13,12 @@ import 'package:oktava/utilities/widgets/position_seek_widget.dart';
 import 'package:oktava/utilities/widgets/playing_controls_widget.dart';
 
 class FullPlayerView extends StatefulWidget {
+  final backRoute;
   final List<AudioPlayerModel> models;
   const FullPlayerView({
     Key? key,
     required this.models,
+    required this.backRoute,
   }) : super(key: key);
 
   @override
@@ -102,7 +104,7 @@ class _FullPlayerViewState extends State<FullPlayerView> {
             color: mainColor,
             onPressed: () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HomePage()));
+                  MaterialPageRoute(builder: (context) => widget.backRoute));
             },
           ),
           elevation: 0,
@@ -249,8 +251,8 @@ class _FullPlayerViewState extends State<FullPlayerView> {
                                     isPlaylist: true,
                                     onStop: () {
                                       BlocProvider.of<AudioPlayerBloc>(context)
-                                          .add(
-                                              const InitializeAudioPlayerEvent());
+                                          .add(const InitializeAudioPlayerEvent(
+                                              null));
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>

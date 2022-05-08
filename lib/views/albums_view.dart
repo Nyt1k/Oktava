@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/main.dart';
+import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
+import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/views/album_list_view.dart';
 
@@ -17,6 +20,7 @@ class _AlbumsViewState extends State<AlbumsView> {
 
   @override
   void initState() {
+    super.initState();
     var seen = <String>{};
     final uniqueNames = widget.models
         .where((element) => seen.add(element.audio.metas.album!))
@@ -31,7 +35,11 @@ class _AlbumsViewState extends State<AlbumsView> {
       }
       albumsList.add(list);
     }
-    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -52,6 +60,8 @@ class _AlbumsViewState extends State<AlbumsView> {
             splashColor: mainColor,
             color: mainColor,
             onPressed: () {
+              BlocProvider.of<AudioPlayerBloc>(context)
+                  .add(const InitializeAudioPlayerEvent(null));
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const HomePage()));
             },
@@ -79,8 +89,12 @@ class _AlbumsViewState extends State<AlbumsView> {
             final album = albumsList[index];
             return InkWell(
               onTap: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => AlbumListView(album: album,)));
+                BlocProvider.of<AudioPlayerBloc>(context)
+                    .add(InitializeAudioPlayerEvent(album));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => AlbumListView(
+                          album: album,
+                        )));
               },
               splashColor: mainColor,
               child: Container(

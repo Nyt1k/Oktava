@@ -1,7 +1,7 @@
 import 'package:oktava/data/model/audio_player_model.dart';
 
 abstract class AudioPlayerProvider {
-  Future<void> init();
+  Future<void> init(List<AudioPlayerModel>? list);
   Future<AudioPlayerModel> getById(String audioPlayerId);
   Future<List<AudioPlayerModel>> getAll();
 

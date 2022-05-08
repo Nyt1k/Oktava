@@ -7,7 +7,8 @@ abstract class AudioPlayerEvent {
 }
 
 class InitializeAudioPlayerEvent extends AudioPlayerEvent {
-  const InitializeAudioPlayerEvent();
+  final List<AudioPlayerModel>? list;
+  const InitializeAudioPlayerEvent(this.list);
 }
 
 class TriggeredPlayAudioPlayerEvent extends AudioPlayerEvent {

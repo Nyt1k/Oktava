@@ -37,7 +37,7 @@ class LocalAudioPlayerService implements AudioPlayerProvider {
   }
 
   @override
-  Future<void> init() {
+  Future<void> init(List<AudioPlayerModel>? list) {
     // TODO: implement init
     throw UnimplementedError();
   }

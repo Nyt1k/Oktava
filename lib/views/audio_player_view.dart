@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
@@ -17,6 +18,16 @@ class AudioPlayerView extends StatefulWidget {
 
 class _AudioPlayerViewState extends State<AudioPlayerView> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
@@ -25,14 +36,14 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
         builder: (context, state) {
           if (state is AudioPlayerInitialState) {
             BlocProvider.of<AudioPlayerBloc>(context)
-                .add(const InitializeAudioPlayerEvent());
+                .add(const InitializeAudioPlayerEvent(null));
             return buildCircularProgress();
           } else if (state is AudioPlayerReadyState) {
             return buildReadyTrackList(state);
           } else if (state is AudioPlayerPlayingState) {
-            return buildPlayingTrackList(state);
+            return buildPlayingTrackList(state, const HomePage());
           } else if (state is AudioPlayerPausedState) {
-            return buildPausedTrackList(state);
+            return buildPausedTrackList(state, const HomePage());
           } else {
             return buildUnknownStateError();
           }
@@ -41,33 +52,6 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
     );
   }
 }
-
-// class AudioPlayerView extends StatelessWidget {
-//   const AudioPlayerView({Key? key}) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       alignment: Alignment.center,
-//       child: BlocBuilder<AudioPlayerBloc, AudioPlayerState>(
-//         builder: (context, state) {
-//           if (state is AudioPlayerInitialState) {
-//             BlocProvider.of<AudioPlayerBloc>(context)
-//                 .add(const InitializeAudioPlayerEvent());
-//             return buildCircularProgress();
-//           } else if (state is AudioPlayerReadyState) {
-//             return buildReadyTrackList(state);
-//           } else if (state is AudioPlayerPlayingState) {
-//             return buildPlayingTrackList(state);
-//           } else if (state is AudioPlayerPausedState) {
-//             return buildPausedTrackList(state);
-//           } else {
-//             return buildUnknownStateError();
-//           }
-//         },
-//       ),
-//     );
-//   }
 
 Widget buildReadyTrackList(AudioPlayerReadyState state) {
   return ListView.builder(
@@ -80,7 +64,7 @@ Widget buildReadyTrackList(AudioPlayerReadyState state) {
   );
 }
 
-Widget buildPlayingTrackList(AudioPlayerPlayingState state) {
+Widget buildPlayingTrackList(AudioPlayerPlayingState state, dynamic backRoute) {
   return Stack(
     fit: StackFit.expand,
     alignment: Alignment.topCenter,
@@ -99,13 +83,15 @@ Widget buildPlayingTrackList(AudioPlayerPlayingState state) {
       ),
       Container(
         alignment: Alignment.bottomCenter,
-        child: const PlayerWidget(),
+        child: PlayerWidget(
+          backRoute: backRoute,
+        ),
       )
     ],
   );
 }
 
-Widget buildPausedTrackList(AudioPlayerPausedState state) {
+Widget buildPausedTrackList(AudioPlayerPausedState state, dynamic backRoute) {
   return Stack(
     fit: StackFit.expand,
     alignment: Alignment.topCenter,
@@ -124,7 +110,9 @@ Widget buildPausedTrackList(AudioPlayerPausedState state) {
       ),
       Container(
         alignment: Alignment.bottomCenter,
-        child: const PlayerWidget(),
+        child: PlayerWidget(
+          backRoute: backRoute,
+        ),
       )
     ],
   );

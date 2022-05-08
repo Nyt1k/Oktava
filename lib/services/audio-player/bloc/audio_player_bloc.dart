@@ -53,7 +53,7 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
           await assetsAudioPlayer.stop();
           emit(AudioPlayerReadyState(updatedList));
         }
-        await audioPlayerProvider.init();
+        await audioPlayerProvider.init(event.list);
         final audioList = await audioPlayerProvider.getAll();
         emit(AudioPlayerReadyState(audioList));
       },

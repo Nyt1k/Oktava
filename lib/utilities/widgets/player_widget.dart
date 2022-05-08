@@ -8,7 +8,8 @@ import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/views/full_player_view.dart';
 
 class PlayerWidget extends StatelessWidget {
-  const PlayerWidget({Key? key}) : super(key: key);
+  final backRoute;
+  const PlayerWidget({Key? key,required this.backRoute}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +33,8 @@ class PlayerWidget extends StatelessWidget {
     );
   }
 
-  Widget _showPlayer(BuildContext context, AudioPlayerModel model, List<AudioPlayerModel> models) {
+  Widget _showPlayer(BuildContext context, AudioPlayerModel model,
+      List<AudioPlayerModel> models) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
@@ -50,7 +52,7 @@ class PlayerWidget extends StatelessWidget {
           child: InkWell(
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => FullPlayerView(models: models)));
+                  builder: (context) => FullPlayerView(models: models,backRoute: backRoute,)));
             },
             child: ListTile(
               leading: setLeading(model),
