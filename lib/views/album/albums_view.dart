@@ -5,11 +5,14 @@ import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
-import 'package:oktava/views/album_list_view.dart';
+import 'package:oktava/views/album/album_list_view.dart';
 
 class AlbumsView extends StatefulWidget {
   final List<AudioPlayerModel> models;
-  const AlbumsView({Key? key, required this.models}) : super(key: key);
+  const AlbumsView({
+    Key? key,
+    required this.models,
+  }) : super(key: key);
 
   @override
   State<AlbumsView> createState() => _AlbumsViewState();
@@ -22,7 +25,7 @@ class _AlbumsViewState extends State<AlbumsView> {
   void initState() {
     super.initState();
     var seen = <String>{};
-    final uniqueNames = widget.models
+    widget.models
         .where((element) => seen.add(element.audio.metas.album!))
         .toList();
 
@@ -82,7 +85,7 @@ class _AlbumsViewState extends State<AlbumsView> {
             childAspectRatio: 1.0,
             crossAxisSpacing: 0.0,
             mainAxisSpacing: 5,
-            mainAxisExtent: 200,
+            mainAxisExtent: 190,
           ),
           itemCount: albumsList.length,
           itemBuilder: (context, index) {

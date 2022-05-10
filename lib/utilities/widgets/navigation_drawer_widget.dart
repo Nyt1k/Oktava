@@ -9,9 +9,11 @@ import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/dialogs/logout_dialogs.dart';
-import 'package:oktava/views/albums_view.dart';
-import 'package:oktava/views/upload_song_view.dart';
-import 'package:oktava/views/user_profile_view.dart';
+import 'package:oktava/views/additional/user_songs_view.dart';
+import 'package:oktava/views/album/albums_view.dart';
+import 'package:oktava/views/artist/artists_view.dart';
+import 'package:oktava/views/additional/upload_song_view.dart';
+import 'package:oktava/views/additional/user_profile_view.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
   final AuthUser user;
@@ -42,7 +44,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                 child: Column(
                   children: [
                     const SizedBox(
-                      height: 16,
+                      height: 8,
                     ),
                     buildMenuItem(
                       text: 'All songs',
@@ -50,14 +52,14 @@ class NavigationDrawerWidget extends StatelessWidget {
                       onClicked: () => selectedItem(context, 1, null),
                     ),
                     const SizedBox(
-                      height: 16,
+                      height: 8,
                     ),
                     buildMenuItem(
                         text: 'Albums',
                         icon: Icons.album_rounded,
                         onClicked: () => selectedItem(context, 2, null)),
                     const SizedBox(
-                      height: 16,
+                      height: 8,
                     ),
                     buildMenuItem(
                       text: 'Artists',
@@ -65,15 +67,23 @@ class NavigationDrawerWidget extends StatelessWidget {
                       onClicked: () => selectedItem(context, 3, null),
                     ),
                     const SizedBox(
-                      height: 16,
+                      height: 8,
                     ),
                     buildMenuItem(
-                      text: 'Genres',
-                      icon: Icons.graphic_eq_rounded,
+                      text: 'Favorites',
+                      icon: Icons.favorite_rounded,
                       onClicked: () => selectedItem(context, 4, null),
                     ),
                     const SizedBox(
-                      height: 32,
+                      height: 8,
+                    ),
+                    buildMenuItem(
+                      text: 'Playlists',
+                      icon: Icons.playlist_play_rounded,
+                      onClicked: () => selectedItem(context, 5, null),
+                    ),
+                    const SizedBox(
+                      height: 12,
                     ),
                     Container(
                         height: 2,
@@ -82,26 +92,22 @@ class NavigationDrawerWidget extends StatelessWidget {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10)))),
                     const SizedBox(
-                      height: 16,
+                      height: 8,
                     ),
-                    const SizedBox(
-                      height: 16,
+                    buildMenuItem(
+                      text: 'My songs',
+                      icon: Icons.library_music_rounded,
+                      onClicked: () => selectedItem(context, 6, user),
                     ),
                     buildMenuItem(
                       text: 'Upload',
                       icon: Icons.cloud_upload_rounded,
-                      onClicked: () => selectedItem(context, 5, null),
-                    ),
-                    const SizedBox(
-                      height: 16,
+                      onClicked: () => selectedItem(context, 7, null),
                     ),
                     buildMenuItem(
                       text: 'Settings',
                       icon: Icons.settings,
-                      onClicked: () => selectedItem(context, 6, null),
-                    ),
-                    const SizedBox(
-                      height: 16,
+                      onClicked: () => selectedItem(context, 8, null),
                     ),
                     buildMenuItem(
                       text: 'Log out',
@@ -114,8 +120,6 @@ class NavigationDrawerWidget extends StatelessWidget {
                                 const AuthEventLogOut(),
                               );
                         }
-                        // Navigator.pop(context);
-                        //selectedItem(context, 7, user);
                       },
                     ),
                   ],
@@ -153,8 +157,28 @@ class NavigationDrawerWidget extends StatelessWidget {
           ),
         ));
         break;
-      case 5:
-      Navigator.pop(context);
+      case 3:
+        final list = await StorageAudioPlayerFactory().getModelsFromStorage();
+        Navigator.of(context).pop();
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => ArtistsView(
+            models: list,
+          ),
+        ));
+        break;
+      case 6:
+        final list = await StorageAudioPlayerFactory()
+            .getUserModelsFromStorage(user!.id);
+        Navigator.of(context).pop();
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => UserSongsView(
+            models: list,
+            user: user,
+          ),
+        ));
+        break;
+      case 7:
+        Navigator.pop(context);
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => const UploadSongView(),
         ));

@@ -125,6 +125,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                   width: 24,
                 ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(
                       height: 20,
@@ -136,9 +137,6 @@ class _UserProfileViewState extends State<UserProfileView> {
                           style:
                               const TextStyle(color: mainColor, fontSize: 22),
                         ),
-                        const SizedBox(
-                          width: 165,
-                        )
                       ],
                     ),
                     const SizedBox(
@@ -151,9 +149,6 @@ class _UserProfileViewState extends State<UserProfileView> {
                           style:
                               const TextStyle(color: mainColor, fontSize: 14),
                         ),
-                        const SizedBox(
-                          width: 40,
-                        )
                       ],
                     ),
                     const SizedBox(
@@ -186,9 +181,6 @@ class _UserProfileViewState extends State<UserProfileView> {
                           'Profile is verified',
                           style: TextStyle(color: mainColor, fontSize: 12),
                         ),
-                        const SizedBox(
-                          width: 95,
-                        )
                       ],
                     ),
                   ],

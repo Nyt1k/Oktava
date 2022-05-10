@@ -41,8 +41,14 @@ class AudioTrackWidget extends StatelessWidget {
                 ),
               ],
             ),
-            title: setTitle(),
-            subtitle: setSubTitle(),
+            title: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: setTitle(),
+            ),
+            subtitle: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: setSubTitle(),
+            ),
             onTap: setCallBack(context),
           ),
         ),
@@ -103,15 +109,6 @@ class AudioTrackWidget extends StatelessWidget {
       audioPlayerModel.audio.metas.artist!,
       style: TextStyle(color: mainColor.withAlpha(180)),
     );
-  }
-
-  Future<Widget> setLength() async {
-    final metadata =
-        await MetadataRetriever.fromFile(File(audioPlayerModel.audio.path));
-
-    int? duration = metadata.trackDuration;
-
-    return Text(duration.toString());
   }
 
   void Function() setCallBack(BuildContext context) {

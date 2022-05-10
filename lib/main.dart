@@ -18,10 +18,10 @@ import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/custom_progress_indicator.dart';
 import 'package:oktava/utilities/widgets/navigation_drawer_widget.dart';
 import 'package:oktava/views/audio_player_view.dart';
-import 'package:oktava/views/forgot_password_view.dart';
-import 'package:oktava/views/login_view.dart';
-import 'package:oktava/views/register_view.dart';
-import 'package:oktava/views/verify_email_view.dart';
+import 'package:oktava/views/user/forgot_password_view.dart';
+import 'package:oktava/views/user/login_view.dart';
+import 'package:oktava/views/user/register_view.dart';
+import 'package:oktava/views/user/verify_email_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

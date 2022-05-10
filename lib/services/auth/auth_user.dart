@@ -9,12 +9,16 @@ class AuthUser {
   final bool isEmailVerified;
   final String? userName;
   final String? userProfileImage;
+  final List<String>? userFavorites;
+  final List<List<String>>? userPlaylists;
   const AuthUser({
     required this.id,
     required this.email,
     required this.isEmailVerified,
     this.userName,
     this.userProfileImage,
+    this.userFavorites,
+    this.userPlaylists,
   });
 
   factory AuthUser.fromFirebase(User user) => AuthUser(

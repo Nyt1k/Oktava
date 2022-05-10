@@ -1,4 +1,3 @@
-import 'package:oktava/services/auth/auth_user.dart';
 
 abstract class AuthEvent {
   const AuthEvent();

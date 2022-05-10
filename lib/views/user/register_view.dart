@@ -4,8 +4,8 @@ import 'package:oktava/services/auth/auth_exception.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/utilities/dialogs/error_dialog.dart';
 
-import '../services/auth/bloc/auth_bloc.dart';
-import '../services/auth/bloc/auth_state.dart';
+import '../../services/auth/bloc/auth_bloc.dart';
+import '../../services/auth/bloc/auth_state.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({Key? key}) : super(key: key);

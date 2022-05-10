@@ -52,7 +52,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                   filter: ImageFilter.blur(sigmaX: 4.0, sigmaY: 4.0),
                   child: Container(
                     decoration:
-                        BoxDecoration(color: mainColor.withOpacity(0.0)),
+                        BoxDecoration(color: additionalColor.withOpacity(0.1)),
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Row(

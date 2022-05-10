@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +10,7 @@ import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/position_seek_widget.dart';
 import 'package:oktava/utilities/widgets/playing_controls_widget.dart';
+import 'package:oktava/views/album/album_list_view.dart';
 
 class FullPlayerView extends StatefulWidget {
   final backRoute;
@@ -188,12 +188,8 @@ class _FullPlayerViewState extends State<FullPlayerView> {
                                       ),
                                       Text(
                                         myAudio.metas.title.toString(),
-                                        style: TextStyle(
-                                          color: Color(
-                                                  (math.Random().nextDouble() *
-                                                          0xFFFFFF)
-                                                      .toInt())
-                                              .withOpacity(1.0),
+                                        style: const TextStyle(
+                                          color: Colors.white70,
                                           fontSize: 20,
                                         ),
                                       ),
@@ -250,13 +246,24 @@ class _FullPlayerViewState extends State<FullPlayerView> {
                                     loopMode: loopMode,
                                     isPlaylist: true,
                                     onStop: () {
-                                      BlocProvider.of<AudioPlayerBloc>(context)
-                                          .add(const InitializeAudioPlayerEvent(
-                                              null));
+                                      if (widget.backRoute is HomePage) {
+                                        BlocProvider.of<AudioPlayerBloc>(
+                                                context)
+                                            .add(
+                                                const InitializeAudioPlayerEvent(
+                                                    null));
+                                      } else if (widget.backRoute
+                                          is AlbumListView) {
+                                        BlocProvider.of<AudioPlayerBloc>(
+                                                context)
+                                            .add(InitializeAudioPlayerEvent(
+                                                widget.models));
+                                      }
+
                                       Navigator.of(context).push(
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const HomePage()));
+                                                  widget.backRoute));
                                     },
                                     onPlay: () {
                                       if (isPlaying) {
