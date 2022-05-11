@@ -34,6 +34,17 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
       ),
     );
 
+    on<AudioItemsRefreshAudioPlayerEvent>(
+      (event, emit) async {
+        emit(AudioPlayerItemsRefreshingState());
+
+        await audioPlayerProvider
+            .getAll()
+            .whenComplete(() => {null})
+            .then((value) => {emit(AudioPlayerReadyState(value))});
+      },
+    );
+
     on<InitializeAudioPlayerEvent>(
       (event, emit) async {
         if (state is AudioPlayerPlayingState) {
@@ -52,10 +63,13 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
 
           await assetsAudioPlayer.stop();
           emit(AudioPlayerReadyState(updatedList));
+        } else {
+          await audioPlayerProvider.init(event.list);
+          await audioPlayerProvider
+              .getAll()
+              .whenComplete(() => {null})
+              .then((value) => {emit(AudioPlayerReadyState(value))});
         }
-        await audioPlayerProvider.init(event.list);
-        final audioList = await audioPlayerProvider.getAll();
-        emit(AudioPlayerReadyState(audioList));
       },
     );
 

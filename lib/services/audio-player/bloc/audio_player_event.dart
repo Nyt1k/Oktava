@@ -51,3 +51,7 @@ class AudioPausedAudioPlayerEvent extends AudioPlayerEvent {
 class AudioStoppedAudioPlayerEvent extends AudioPlayerEvent {
   const AudioStoppedAudioPlayerEvent();
 }
+
+class AudioItemsRefreshAudioPlayerEvent extends AudioPlayerEvent {
+  const AudioItemsRefreshAudioPlayerEvent();
+}

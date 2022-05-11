@@ -3,13 +3,18 @@ import 'package:oktava/data/repository/audio_player_provider.dart';
 import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 
 class FirebaseStorageAudioPlayerService implements AudioPlayerProvider {
-  late List<AudioPlayerModel> audioPlayerModels;
+  List<AudioPlayerModel> audioPlayerModels = [];
 
   @override
   Future<void> init(List<AudioPlayerModel>? list) async {
+
+
     if (list != null) {
       audioPlayerModels = list;
     } else {
+    //       if (audioPlayerModels.isNotEmpty) {
+    //   audioPlayerModels.clear();
+    // }
       audioPlayerModels =
           await StorageAudioPlayerFactory().getModelsFromStorage();
     }

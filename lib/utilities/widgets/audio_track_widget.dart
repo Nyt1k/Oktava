@@ -1,8 +1,6 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_media_metadata/flutter_media_metadata.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';

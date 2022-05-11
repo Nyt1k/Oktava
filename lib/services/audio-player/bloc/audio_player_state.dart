@@ -51,3 +51,5 @@ class AudioPlayerFailureState extends AudioPlayerState with EquatableMixin {
   @override
   List<Object?> get props => [error];
 }
+
+class AudioPlayerItemsRefreshingState extends AudioPlayerState{}

@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/dialogs/delete_song_dialog.dart';
+import 'package:oktava/utilities/dialogs/loading_dialog.dart';
+import 'package:oktava/utilities/dialogs/update_song_dialog.dart';
 import 'package:oktava/views/additional/user_songs_view.dart';
 
 class SongsListWidget extends StatefulWidget {
@@ -18,6 +21,7 @@ class SongsListWidget extends StatefulWidget {
 }
 
 class _SongsListWidgetState extends State<SongsListWidget> {
+  final FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -91,7 +95,14 @@ class _SongsListWidgetState extends State<SongsListWidget> {
           shape: const CircleBorder(),
           clipBehavior: Clip.hardEdge,
           child: IconButton(
-            onPressed: () {},
+            onPressed: () async {
+              final shouldUpdate =
+                  await showUpdateSongDialog(context, widget.audioPlayerModel);
+              if (shouldUpdate != null) {
+                await updateSong(shouldUpdate);
+                setState(() {});
+              }
+            },
             splashColor: mainColor,
             icon: const Icon(
               Icons.update_rounded,
@@ -112,6 +123,7 @@ class _SongsListWidgetState extends State<SongsListWidget> {
               final shouldDelete = await showDeleteSongDialog(
                   context, widget.audioPlayerModel.audio.metas.title!);
               if (shouldDelete) {
+                showLoadingDialog(context, 'Deleting image');
                 await StorageAudioPlayerFactory().deleteModelFromStorage(
                   widget.audioPlayerModel.id,
                   widget.audioPlayerModel.audio.path,
@@ -138,5 +150,17 @@ class _SongsListWidgetState extends State<SongsListWidget> {
         ),
       ],
     );
+  }
+
+  updateSong(AudioPlayerModel model) async {
+    var data = {
+      "song_name": model.audio.metas.title,
+      "song_album": model.audio.metas.album,
+      "song_tags": model.songTags,
+      "song_text": model.songText,
+      "song_image": model.audio.metas.image!.path,
+    };
+
+    await firebaseInstance.collection('songs').doc(model.id).update(data);
   }
 }

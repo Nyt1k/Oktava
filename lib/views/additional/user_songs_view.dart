@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
@@ -23,6 +25,16 @@ class UserSongsView extends StatefulWidget {
 
 class _UserSongsViewState extends State<UserSongsView> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: secondaryColor,
@@ -39,11 +51,13 @@ class _UserSongsViewState extends State<UserSongsView> {
             hoverColor: mainColor,
             splashColor: mainColor,
             color: mainColor,
-            onPressed: () {
-              BlocProvider.of<AudioPlayerBloc>(context)
-                  .add(const InitializeAudioPlayerEvent(null));
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HomePage()));
+            onPressed: () async {
+              setState(() {
+                BlocProvider.of<AudioPlayerBloc>(context)
+                    .add(InitializeAudioPlayerEvent(null));
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => const HomePage()));
+              });
             },
           ),
           title: const Text(
@@ -60,7 +74,10 @@ class _UserSongsViewState extends State<UserSongsView> {
           itemCount: widget.models.length,
           itemBuilder: (context, index) {
             return InkWell(
-              child: SongsListWidget(audioPlayerModel: widget.models[index], user: widget.user,),
+              child: SongsListWidget(
+                audioPlayerModel: widget.models[index],
+                user: widget.user,
+              ),
             );
           }),
     );
