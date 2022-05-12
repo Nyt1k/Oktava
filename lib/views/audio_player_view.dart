@@ -7,13 +7,15 @@ import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
+import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/audio_track_widget.dart';
 import 'package:oktava/utilities/widgets/custom_progress_indicator.dart';
 import 'package:oktava/utilities/widgets/player_widget.dart';
 
 class AudioPlayerView extends StatefulWidget {
-  const AudioPlayerView({Key? key}) : super(key: key);
+  final AuthUser user;
+  const AudioPlayerView({Key? key, required this.user}) : super(key: key);
 
   @override
   State<AudioPlayerView> createState() => _AudioPlayerViewState();
@@ -64,6 +66,18 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
         ),
       ),
     );
+  }
+
+  bool isFavorite(AudioPlayerModel model) {
+    if (widget.user.userFavorites != null) {
+      if (widget.user.userFavorites!.contains(model.id)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
   }
 
   Widget buildReadyTrackList(AudioPlayerReadyState state) {
@@ -175,6 +189,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
             itemBuilder: (context, index) {
               return AudioTrackWidget(
                 audioPlayerModel: state.entityList[index],
+                isFavorite: isFavorite(state.entityList[index]),
               );
             },
             itemCount: state.entityList.length,
@@ -301,6 +316,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                   itemBuilder: (context, index) {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
+                      isFavorite: isFavorite(state.entityList[index]),
                     );
                   },
                   itemCount: state.entityList.length,
@@ -436,6 +452,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                   itemBuilder: (context, index) {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
+                      isFavorite: isFavorite(state.entityList[index]),
                     );
                   },
                   itemCount: state.entityList.length,

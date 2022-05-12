@@ -4,14 +4,16 @@ import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
+import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/views/album/album_list_view.dart';
 
 class AlbumsView extends StatefulWidget {
   final List<AudioPlayerModel> models;
+  final AuthUser user;
   const AlbumsView({
     Key? key,
-    required this.models,
+    required this.models,required this.user,
   }) : super(key: key);
 
   @override
@@ -96,7 +98,7 @@ class _AlbumsViewState extends State<AlbumsView> {
                     .add(InitializeAudioPlayerEvent(album));
                 Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => AlbumListView(
-                          album: album,
+                          album: album, user: widget.user,
                         )));
               },
               splashColor: mainColor,

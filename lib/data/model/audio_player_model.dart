@@ -11,12 +11,16 @@ class AudioPlayerModel extends Equatable {
   String? songImage;
   String? songTags;
   String? songText;
+  int likes;
+  int plays;
 
   AudioPlayerModel(
       {this.songUrl,
       this.songImage,
       this.songTags,
       this.songText,
+      this.likes = 0,
+      this.plays = 0,
       required this.id,
       required this.audio,
       required this.isPlaying});
@@ -28,7 +32,7 @@ class AudioPlayerModel extends Equatable {
   bool get stringify => true;
 
   AudioPlayerModel copyWithIsPlaying(bool isPlaying) {
-    return AudioPlayerModel(id: id, audio: audio, isPlaying: isPlaying);
+    return AudioPlayerModel(id: id, audio: audio, isPlaying: isPlaying, likes: likes, plays: plays);
   }
 
   factory AudioPlayerModel.fromDocumentSnapshot(
@@ -49,5 +53,7 @@ class AudioPlayerModel extends Equatable {
         isPlaying: false,
         songTags: snapshot.data()!['song_tags'],
         songText: snapshot.data()!['song_text'],
+        likes: snapshot.data()!['song_likes'],
+        plays: snapshot.data()!['song_plays'],
       );
 }

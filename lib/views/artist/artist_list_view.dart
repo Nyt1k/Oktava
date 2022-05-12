@@ -4,6 +4,7 @@ import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
+import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/audio_track_widget.dart';
@@ -13,7 +14,12 @@ import 'package:oktava/views/artist/artists_view.dart';
 
 class ArtistListView extends StatefulWidget {
   final List<AudioPlayerModel> artist;
-  const ArtistListView({Key? key, required this.artist}) : super(key: key);
+  final AuthUser user;
+  const ArtistListView({
+    Key? key,
+    required this.artist,
+    required this.user,
+  }) : super(key: key);
 
   @override
   State<ArtistListView> createState() => _ArtistListViewState();
@@ -53,6 +59,7 @@ class _ArtistListViewState extends State<ArtistListView> {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => ArtistsView(
                         models: list,
+                        user: widget.user,
                       )));
             },
           ),
@@ -73,10 +80,18 @@ class _ArtistListViewState extends State<ArtistListView> {
               return buildReadyTrackList(state);
             } else if (state is AudioPlayerPlayingState) {
               return buildPlayingTrackList(
-                  state, ArtistListView(artist: widget.artist));
+                  state,
+                  ArtistListView(
+                    artist: widget.artist,
+                    user: widget.user,
+                  ));
             } else if (state is AudioPlayerPausedState) {
               return buildPausedTrackList(
-                  state, ArtistListView(artist: widget.artist));
+                  state,
+                  ArtistListView(
+                    artist: widget.artist,
+                    user: widget.user,
+                  ));
             } else {
               return buildUnknownStateError();
             }
@@ -85,248 +100,264 @@ class _ArtistListViewState extends State<ArtistListView> {
       ),
     );
   }
-}
 
-Widget buildReadyTrackList(AudioPlayerReadyState state) {
-  return Column(
-    children: [
-      Container(
-        padding: const EdgeInsets.all(15.0),
-        height: 130,
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    state.entityList[0].audio.metas.artist!,
-                    style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        color: mainColor.withAlpha(180)),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Tracks: ' + state.entityList.length.toString(),
-                        style: TextStyle(
-                            fontSize: 25, color: mainColor.withAlpha(130)),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-      Expanded(
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            return AudioTrackWidget(
-              audioPlayerModel: state.entityList[index],
-            );
-          },
-          itemCount: state.entityList.length,
-        ),
-      ),
-    ],
-  );
-}
+  bool isFavorite(AudioPlayerModel model) {
+    if (widget.user.userFavorites != null) {
+      if (widget.user.userFavorites!.contains(model.id)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
 
-Widget buildPlayingTrackList(AudioPlayerPlayingState state, dynamic backRoute) {
-  return Column(
-    children: [
-      Container(
-        padding: const EdgeInsets.all(15.0),
-        height: 200,
-        child: Row(
-          children: [
-            Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: mainColor.withAlpha(120),
-                    blurRadius: 6,
-                    offset: const Offset(0, 0),
+  Widget buildReadyTrackList(AudioPlayerReadyState state) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(15.0),
+          height: 130,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      state.entityList[0].audio.metas.artist!,
+                      style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          color: mainColor.withAlpha(180)),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Tracks: ' + state.entityList.length.toString(),
+                          style: TextStyle(
+                              fontSize: 25, color: mainColor.withAlpha(130)),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemBuilder: (context, index) {
+              return AudioTrackWidget(
+                audioPlayerModel: state.entityList[index],
+                isFavorite: isFavorite(state.entityList[index]),
+              );
+            },
+            itemCount: state.entityList.length,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildPlayingTrackList(
+      AudioPlayerPlayingState state, dynamic backRoute) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(15.0),
+          height: 200,
+          child: Row(
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: mainColor.withAlpha(120),
+                      blurRadius: 6,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  child: Image.network(
+                    state.entityList[0].audio.metas.image!.path.isNotEmpty
+                        ? state.entityList[0].audio.metas.image!.path
+                        : state.entityList[0].audio.metas.onImageLoadFail!.path,
+                    fit: BoxFit.cover,
                   ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                child: Image.network(
-                  state.entityList[0].audio.metas.image!.path.isNotEmpty
-                      ? state.entityList[0].audio.metas.image!.path
-                      : state.entityList[0].audio.metas.onImageLoadFail!.path,
-                  fit: BoxFit.cover,
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    state.entityList[0].audio.metas.album!,
-                    style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        color: mainColor.withAlpha(180)),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        state.entityList[0].audio.metas.artist!,
-                        style: TextStyle(
-                            fontSize: 25, color: mainColor.withAlpha(130)),
-                      ),
-                      Text(
-                        'Tracks: ' + state.entityList.length.toString(),
-                        style: TextStyle(
-                            fontSize: 25, color: mainColor.withAlpha(130)),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
+              Container(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      state.entityList[0].audio.metas.album!,
+                      style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          color: mainColor.withAlpha(180)),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          state.entityList[0].audio.metas.artist!,
+                          style: TextStyle(
+                              fontSize: 25, color: mainColor.withAlpha(130)),
+                        ),
+                        Text(
+                          'Tracks: ' + state.entityList.length.toString(),
+                          style: TextStyle(
+                              fontSize: 25, color: mainColor.withAlpha(130)),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
-      ),
-      Expanded(
-        child: Stack(
-          fit: StackFit.expand,
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            Container(
-              alignment: Alignment.topCenter,
-              child: ListView.builder(
-                padding: const EdgeInsets.only(bottom: 124),
-                itemBuilder: (context, index) {
-                  return AudioTrackWidget(
-                    audioPlayerModel: state.entityList[index],
-                  );
-                },
-                itemCount: state.entityList.length,
-              ),
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: PlayerWidget(
-                backRoute: backRoute,
-              ),
-            )
-          ],
-        ),
-      ),
-    ],
-  );
-}
-
-Widget buildPausedTrackList(AudioPlayerPausedState state, dynamic backRoute) {
-  return Column(
-    children: [
-      Container(
-        padding: const EdgeInsets.all(15.0),
-        height: 200,
-        child: Row(
-          children: [
-            Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: mainColor.withAlpha(120),
-                    blurRadius: 6,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                child: Image.network(
-                  state.entityList[0].audio.metas.image!.path.isNotEmpty
-                      ? state.entityList[0].audio.metas.image!.path
-                      : state.entityList[0].audio.metas.onImageLoadFail!.path,
-                  fit: BoxFit.cover,
+        Expanded(
+          child: Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.topCenter,
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 124),
+                  itemBuilder: (context, index) {
+                    return AudioTrackWidget(
+                      audioPlayerModel: state.entityList[index],
+                      isFavorite: isFavorite(state.entityList[index]),
+                    );
+                  },
+                  itemCount: state.entityList.length,
                 ),
               ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    state.entityList[0].audio.metas.album!,
-                    style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        color: mainColor.withAlpha(180)),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        state.entityList[0].audio.metas.artist!,
-                        style: TextStyle(
-                            fontSize: 25, color: mainColor.withAlpha(130)),
-                      ),
-                      Text(
-                        'Tracks: ' + state.entityList.length.toString(),
-                        style: TextStyle(
-                            fontSize: 25, color: mainColor.withAlpha(130)),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            )
-          ],
+              Container(
+                alignment: Alignment.bottomCenter,
+                child: PlayerWidget(
+                  backRoute: backRoute,
+                ),
+              )
+            ],
+          ),
         ),
-      ),
-      Expanded(
-        child: Stack(
-          fit: StackFit.expand,
-          alignment: Alignment.topCenter,
-          children: <Widget>[
-            Container(
-              alignment: Alignment.topCenter,
-              child: ListView.builder(
-                padding: const EdgeInsets.only(bottom: 96),
-                itemBuilder: (context, index) {
-                  return AudioTrackWidget(
-                    audioPlayerModel: state.entityList[index],
-                  );
-                },
-                itemCount: state.entityList.length,
+      ],
+    );
+  }
+
+  Widget buildPausedTrackList(AudioPlayerPausedState state, dynamic backRoute) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(15.0),
+          height: 200,
+          child: Row(
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: mainColor.withAlpha(120),
+                      blurRadius: 6,
+                      offset: const Offset(0, 0),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  child: Image.network(
+                    state.entityList[0].audio.metas.image!.path.isNotEmpty
+                        ? state.entityList[0].audio.metas.image!.path
+                        : state.entityList[0].audio.metas.onImageLoadFail!.path,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: PlayerWidget(
-                backRoute: backRoute,
-              ),
-            )
-          ],
+              Container(
+                padding: const EdgeInsets.all(15.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      state.entityList[0].audio.metas.album!,
+                      style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          color: mainColor.withAlpha(180)),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          state.entityList[0].audio.metas.artist!,
+                          style: TextStyle(
+                              fontSize: 25, color: mainColor.withAlpha(130)),
+                        ),
+                        Text(
+                          'Tracks: ' + state.entityList.length.toString(),
+                          style: TextStyle(
+                              fontSize: 25, color: mainColor.withAlpha(130)),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+        Expanded(
+          child: Stack(
+            fit: StackFit.expand,
+            alignment: Alignment.topCenter,
+            children: <Widget>[
+              Container(
+                alignment: Alignment.topCenter,
+                child: ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 96),
+                  itemBuilder: (context, index) {
+                    return AudioTrackWidget(
+                      audioPlayerModel: state.entityList[index],
+                      isFavorite: isFavorite(state.entityList[index]),
+                    );
+                  },
+                  itemCount: state.entityList.length,
+                ),
+              ),
+              Container(
+                alignment: Alignment.bottomCenter,
+                child: PlayerWidget(
+                  backRoute: backRoute,
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
-Widget buildCircularProgress() {
-  return customCircularIndicator();
-}
+  Widget buildCircularProgress() {
+    return customCircularIndicator();
+  }
 
-Widget buildUnknownStateError() {
-  return const Text("Unknown state error");
+  Widget buildUnknownStateError() {
+    return const Text("Unknown state error");
+  }
 }

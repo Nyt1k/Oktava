@@ -9,7 +9,7 @@ class AuthUser {
   final bool isEmailVerified;
   final String? userName;
   final String? userProfileImage;
-  final List<String>? userFavorites;
+  final List<String?>? userFavorites;
   final List<List<String>>? userPlaylists;
   const AuthUser({
     required this.id,
@@ -28,12 +28,22 @@ class AuthUser {
       );
 
   factory AuthUser.fromSnapshot(
-          DocumentSnapshot<Map<String, dynamic>> snapshot) =>
-      AuthUser(
-        id: snapshot.id,
-        email: snapshot.data()!['email'],
-        isEmailVerified: snapshot.data()!['isVerified'],
-        userName: snapshot.data()!['userName'],
-        userProfileImage: snapshot.data()?['userProfileImage'],
-      );
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    List<String?>? list = [];
+    var doc = snapshot.data()?['userFavorites'];
+    if (doc != null) {
+      for (var element in doc) {
+        list.add(element.toString());
+      }
+    }
+
+    return AuthUser(
+      id: snapshot.id,
+      email: snapshot.data()!['email'],
+      isEmailVerified: snapshot.data()!['isVerified'],
+      userName: snapshot.data()!['userName'],
+      userProfileImage: snapshot.data()?['userProfileImage'],
+      userFavorites: list,
+    );
+  }
 }

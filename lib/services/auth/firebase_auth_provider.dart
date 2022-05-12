@@ -15,11 +15,13 @@ class FirebaseAuthProvider implements AuthProvider {
   }
 
   @override
-  Future<AuthUser> createUser(
-      {required String email,
-      required String password,
-      String? userName,
-      String? userProfileImage}) async {
+  Future<AuthUser> createUser({
+    required String email,
+    required String password,
+    String? userName,
+    String? userProfileImage,
+    List<String> userFavorites = const [],
+  }) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -33,6 +35,7 @@ class FirebaseAuthProvider implements AuthProvider {
           isVerified: user.isEmailVerified,
           userName: userName,
           userProfileImage: userProfileImage,
+          userFavorites: userFavorites,
         );
         return user;
       } else {
@@ -134,17 +137,20 @@ class FirebaseAuthProvider implements AuthProvider {
 
   final FirebaseFirestore firebaseInstance = FirebaseFirestore.instance;
 
-  Future<void> createAlreadyAuthUser(
-      {required String userId,
-      required String email,
-      required bool isVerified,
-      String? userName,
-      String? userProfileImage}) async {
+  Future<void> createAlreadyAuthUser({
+    required String userId,
+    required String email,
+    required bool isVerified,
+    String? userName,
+    String? userProfileImage,
+    List<String>? userFavorites,
+  }) async {
     await firebaseInstance.collection('users').doc(userId).set({
       'email': email,
       'isVerified': isVerified,
       'userName': userName,
       'userProfileImage': userProfileImage,
+      'userFavorites': userFavorites,
     });
   }
 
@@ -161,6 +167,9 @@ class FirebaseAuthProvider implements AuthProvider {
     String? userName,
     bool? isVerified,
     String? userProfileImage,
+    String? userFavoritesSong,
+    bool? isFavorite,
+    String? songId,
   }) async {
     if (isVerified != null && userName != null && userProfileImage != null) {
       await firebaseInstance.collection('users').doc(userId).update({
@@ -191,10 +200,32 @@ class FirebaseAuthProvider implements AuthProvider {
       await firebaseInstance.collection('users').doc(userId).update({
         'isVerified': isVerified,
       });
-    } else {
+    } else if (userProfileImage != null) {
       await firebaseInstance.collection('users').doc(userId).update({
         'userProfileImage': userProfileImage,
       });
+    } else if (userFavoritesSong != null) {
+      if (isFavorite!) {
+        var value = [userFavoritesSong];
+        await firebaseInstance
+            .collection('users')
+            .doc(userId)
+            .update({'userFavorites': FieldValue.arrayRemove(value)});
+        await firebaseInstance
+            .collection('songs')
+            .doc(songId)
+            .update({'song_likes': FieldValue.increment(-1)});
+      } else {
+        var value = [userFavoritesSong];
+        await firebaseInstance
+            .collection('users')
+            .doc(userId)
+            .update({'userFavorites': FieldValue.arrayUnion(value)});
+        await firebaseInstance
+            .collection('songs')
+            .doc(songId)
+            .update({'song_likes': FieldValue.increment(1)});
+      }
     }
   }
 }

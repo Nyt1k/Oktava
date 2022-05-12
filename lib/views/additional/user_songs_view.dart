@@ -54,7 +54,7 @@ class _UserSongsViewState extends State<UserSongsView> {
             onPressed: () async {
               setState(() {
                 BlocProvider.of<AudioPlayerBloc>(context)
-                    .add(InitializeAudioPlayerEvent(null));
+                    .add(const InitializeAudioPlayerEvent(null));
                 Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => const HomePage()));
               });

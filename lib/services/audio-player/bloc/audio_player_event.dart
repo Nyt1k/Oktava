@@ -55,3 +55,9 @@ class AudioStoppedAudioPlayerEvent extends AudioPlayerEvent {
 class AudioItemsRefreshAudioPlayerEvent extends AudioPlayerEvent {
   const AudioItemsRefreshAudioPlayerEvent();
 }
+
+class AudioPlayedStatisticsAudioPlayerEvent extends AudioPlayerEvent {
+  final AudioPlayerModel audioPlayerModel;
+
+  const AudioPlayedStatisticsAudioPlayerEvent({required this.audioPlayerModel});
+}

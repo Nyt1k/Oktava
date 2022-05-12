@@ -351,7 +351,9 @@ class _UploadSongViewState extends State<UploadSongView> {
       "song_text": songText.text,
       "song_owner": userId,
       "song_url": songUrl,
-      "song_image": songImage
+      "song_image": songImage,
+      "song_likes": 0,
+      "song_plays": 0,
     };
 
     await firebaseInstance.collection('songs').doc().set(data);

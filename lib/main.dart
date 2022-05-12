@@ -9,6 +9,7 @@ import 'package:oktava/firebase_options.dart';
 import 'package:oktava/helpers/loading/loading_screen.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/auth/auth_service.dart';
+import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';
@@ -129,7 +130,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     context.read<AuthBloc>().add(AuthEventGetUser(userId));
-
     return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
       if (state is AuthStateGetUser) {
         return Scaffold(
@@ -158,7 +158,9 @@ class _MainScreenState extends State<MainScreen> {
             ),
             backgroundColor: mainColor,
           ),
-          body: const AudioPlayerView(),
+          body: AudioPlayerView(
+            user: state.user,
+          ),
         );
       }
       if (state is AuthStateLoggedOut) {

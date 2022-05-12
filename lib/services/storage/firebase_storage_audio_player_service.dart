@@ -7,17 +7,17 @@ class FirebaseStorageAudioPlayerService implements AudioPlayerProvider {
 
   @override
   Future<void> init(List<AudioPlayerModel>? list) async {
-
-
     if (list != null) {
       audioPlayerModels = list;
     } else {
-    //       if (audioPlayerModels.isNotEmpty) {
-    //   audioPlayerModels.clear();
-    // }
       audioPlayerModels =
           await StorageAudioPlayerFactory().getModelsFromStorage();
     }
+  }
+
+  @override
+  Future<void> updateStatistics(String songId) async {
+    await StorageAudioPlayerFactory().updateSongPlays(songId);
   }
 
   @override

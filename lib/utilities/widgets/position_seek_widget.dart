@@ -40,6 +40,7 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Future.delayed(const Duration(milliseconds: 500));
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -58,9 +59,9 @@ class _PositionSeekWidgetState extends State<PositionSeekWidget> {
           Expanded(
             child: Slider(
               min: 0,
-              max: widget.duration.inMilliseconds.toDouble(),
+              max: widget.duration.inMilliseconds.toDouble() + 1000,
               value: percent * widget.duration.inMilliseconds.toDouble(),
-              activeColor:mainColor.withAlpha(200),
+              activeColor: mainColor.withAlpha(200),
               thumbColor: mainColor,
               inactiveColor: secondaryColor,
               onChanged: (newValue) {

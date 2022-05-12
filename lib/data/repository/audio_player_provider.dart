@@ -8,4 +8,5 @@ abstract class AudioPlayerProvider {
   Future<List<AudioPlayerModel>> updateModel(AudioPlayerModel updateModel);
   Future<List<AudioPlayerModel>> updateAllModels(
       List<AudioPlayerModel> updateList);
+  Future<void> updateStatistics(String songId);
 }

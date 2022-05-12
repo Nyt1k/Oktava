@@ -44,7 +44,7 @@ Widget updateSongDialog(BuildContext context, AudioPlayerModel model) {
   songText.text = model.songText!;
 
   newModel =
-      AudioPlayerModel(id: model.id, audio: model.audio, isPlaying: false);
+      AudioPlayerModel(id: model.id, audio: model.audio, isPlaying: false, likes: model.likes, plays: model.plays);
   return SizedBox(
     height: 500,
     width: 350,

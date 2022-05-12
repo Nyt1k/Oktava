@@ -48,4 +48,11 @@ class StorageAudioPlayerFactory {
     await _storage.refFromURL(imageUrl).delete();
     await _db.collection('songs').doc(docId).delete();
   }
+
+  Future<void> updateSongPlays(String songId) async{
+    await _db
+            .collection('songs')
+            .doc(songId)
+            .update({'song_plays': FieldValue.increment(1)});
+  }
 }

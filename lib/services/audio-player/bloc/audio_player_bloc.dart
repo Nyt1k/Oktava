@@ -20,28 +20,37 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
     playerSubscriptions.add(
       assetsAudioPlayer.playlistAudioFinished.listen(
         (event) async {
-          final List<AudioPlayerModel> currentList =
-              await audioPlayerProvider.getAll();
-          if (currentList
-              .where((element) => element.isPlaying == true)
-              .isNotEmpty) {
-            AudioPlayerModel currentlyPlaying =
-                currentList.firstWhere((element) => element.isPlaying == true);
+          if (assetsAudioPlayer.currentLoopMode == LoopMode.none) {
+            final List<AudioPlayerModel> currentList =
+                await audioPlayerProvider.getAll();
+            if (currentList
+                .where((element) => element.isPlaying == true)
+                .isNotEmpty) {
+              AudioPlayerModel currentlyPlaying = currentList
+                  .firstWhere((element) => element.isPlaying == true);
 
-            add(TriggeredNextAudioPlayerEvent(currentlyPlaying));
+              add(TriggeredNextAudioPlayerEvent(currentlyPlaying));
+              add(AudioPlayedStatisticsAudioPlayerEvent(
+                  audioPlayerModel: currentlyPlaying));
+            }
           }
         },
       ),
     );
 
+    on<AudioPlayedStatisticsAudioPlayerEvent>(
+      (event, emit) async {
+        await audioPlayerProvider.updateStatistics(event.audioPlayerModel.id);
+      },
+    );
+
     on<AudioItemsRefreshAudioPlayerEvent>(
       (event, emit) async {
         emit(AudioPlayerItemsRefreshingState());
-
         await audioPlayerProvider
             .getAll()
             .whenComplete(() => {null})
-            .then((value) => {emit(AudioPlayerReadyState(value))});
+            .then((value) => {emit(const AudioPlayerInitialState())});
       },
     );
 

@@ -40,4 +40,9 @@ class LocalAudioPlayerService implements AudioPlayerProvider {
   Future<void> init(List<AudioPlayerModel>? list) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<void> updateStatistics(String songId) {
+    throw UnimplementedError();
+  }
 }

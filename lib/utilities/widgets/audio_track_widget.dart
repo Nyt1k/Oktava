@@ -1,19 +1,22 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gif_view/gif_view.dart';
 import 'package:oktava/data/model/audio_player_model.dart';
+import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
+import 'package:oktava/services/auth/firebase_auth_provider.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 
 class AudioTrackWidget extends StatelessWidget {
   const AudioTrackWidget({
     Key? key,
     required this.audioPlayerModel,
+    required this.isFavorite,
   }) : super(key: key);
 
   final AudioPlayerModel audioPlayerModel;
+  final bool isFavorite;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +50,7 @@ class AudioTrackWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 10),
               child: setSubTitle(),
             ),
+            trailing: setTrailing(isFavorite, context),
             onTap: setCallBack(context),
           ),
         ),
@@ -109,6 +113,90 @@ class AudioTrackWidget extends StatelessWidget {
     );
   }
 
+  Widget setTrailing(bool isFavorite, BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Column(
+          children: [
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.favorite_rounded,
+                  size: 14,
+                  color: mainColor.withAlpha(120),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  audioPlayerModel.likes.toString(),
+                  style: TextStyle(color: mainColor.withAlpha(180)),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 5,
+            ),
+            Row(
+              children: [
+                Icon(
+                  Icons.play_arrow_rounded,
+                  size: 14,
+                  color: mainColor.withAlpha(120),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  audioPlayerModel.plays.toString(),
+                  style: TextStyle(color: mainColor.withAlpha(180)),
+                )
+              ],
+            )
+          ],
+        ),
+        Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.hardEdge,
+          child: IconButton(
+            onPressed: () async {
+              if (isFavorite) {
+                await FirebaseAuthProvider().updateAuthUSer(
+                    userId: FirebaseAuthProvider().currentUser!.id,
+                    userFavoritesSong: audioPlayerModel.id,
+                    isFavorite: true,
+                    songId: audioPlayerModel.id);
+              } else {
+                await FirebaseAuthProvider().updateAuthUSer(
+                    userId: FirebaseAuthProvider().currentUser!.id,
+                    userFavoritesSong: audioPlayerModel.id,
+                    isFavorite: false,
+                    songId: audioPlayerModel.id);
+              }
+              BlocProvider.of<AudioPlayerBloc>(context)
+                  .add(const AudioItemsRefreshAudioPlayerEvent());
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ));
+            },
+            splashColor: mainColor,
+            icon: Icon(
+              isFavorite
+                  ? Icons.favorite_rounded
+                  : Icons.favorite_border_rounded,
+              color: mainColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   void Function() setCallBack(BuildContext context) {
     if (audioPlayerModel.isPlaying) {
       return () {
@@ -123,6 +211,8 @@ class AudioTrackWidget extends StatelessWidget {
     }
   }
 }
+
+
 
 // class AudioTrackWidget extends StatefulWidget {
 //   const AudioTrackWidget({Key? key, required this.audioPlayerModel})
