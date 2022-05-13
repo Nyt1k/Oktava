@@ -9,7 +9,6 @@ import 'package:oktava/firebase_options.dart';
 import 'package:oktava/helpers/loading/loading_screen.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/auth/auth_service.dart';
-import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';

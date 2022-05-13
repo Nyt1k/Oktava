@@ -5,18 +5,28 @@ import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
+import 'package:oktava/services/auth/auth_user.dart';
 import 'package:oktava/services/auth/firebase_auth_provider.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
+import 'package:oktava/utilities/dialogs/error_dialog.dart';
+import 'package:oktava/utilities/dialogs/remove_song_from_playlist_dialog.dart';
+import 'package:oktava/utilities/dialogs/show_add_song_to_playlist_dialog.dart';
 
 class AudioTrackWidget extends StatelessWidget {
-  const AudioTrackWidget({
+  AudioTrackWidget({
     Key? key,
     required this.audioPlayerModel,
     required this.isFavorite,
+    required this.user,
+    this.isPlaylist = false,
+    this.playlistName,
   }) : super(key: key);
 
   final AudioPlayerModel audioPlayerModel;
   final bool isFavorite;
+  final AuthUser user;
+  bool isPlaylist;
+  String? playlistName;
 
   @override
   Widget build(BuildContext context) {
@@ -114,87 +124,251 @@ class AudioTrackWidget extends StatelessWidget {
   }
 
   Widget setTrailing(bool isFavorite, BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Column(
+    return Builder(builder: (context) {
+      if (isPlaylist) {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(
-              height: 10,
-            ),
-            Row(
+            Column(
               children: [
-                Icon(
-                  Icons.favorite_rounded,
-                  size: 14,
-                  color: mainColor.withAlpha(120),
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.favorite_rounded,
+                      size: 14,
+                      color: mainColor.withAlpha(120),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      audioPlayerModel.likes.toString(),
+                      style: TextStyle(color: mainColor.withAlpha(180)),
+                    )
+                  ],
                 ),
                 const SizedBox(
-                  width: 10,
+                  height: 5,
                 ),
-                Text(
-                  audioPlayerModel.likes.toString(),
-                  style: TextStyle(color: mainColor.withAlpha(180)),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.play_arrow_rounded,
+                      size: 14,
+                      color: mainColor.withAlpha(120),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      audioPlayerModel.plays.toString(),
+                      style: TextStyle(color: mainColor.withAlpha(180)),
+                    )
+                  ],
                 )
               ],
             ),
             const SizedBox(
-              height: 5,
+              width: 5,
             ),
-            Row(
-              children: [
-                Icon(
-                  Icons.play_arrow_rounded,
-                  size: 14,
-                  color: mainColor.withAlpha(120),
+            Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              clipBehavior: Clip.hardEdge,
+              child: IconButton(
+                onPressed: () async {
+                  if (isFavorite) {
+                    await FirebaseAuthProvider().updateAuthUSer(
+                        userId: FirebaseAuthProvider().currentUser!.id,
+                        userFavoritesSong: audioPlayerModel.id,
+                        isFavorite: true,
+                        songId: audioPlayerModel.id);
+                  } else {
+                    await FirebaseAuthProvider().updateAuthUSer(
+                        userId: FirebaseAuthProvider().currentUser!.id,
+                        userFavoritesSong: audioPlayerModel.id,
+                        isFavorite: false,
+                        songId: audioPlayerModel.id);
+                  }
+                  BlocProvider.of<AudioPlayerBloc>(context)
+                      .add(const AudioItemsRefreshAudioPlayerEvent());
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ));
+                },
+                splashColor: mainColor,
+                icon: Icon(
+                  isFavorite
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  color: mainColor,
                 ),
-                const SizedBox(
-                  width: 10,
+              ),
+            ),
+            Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              clipBehavior: Clip.hardEdge,
+              child: IconButton(
+                onPressed: () async {
+                  bool item = await showRemoveSongFromPlaylistDialog(
+                    context,
+                    audioPlayerModel.audio.metas.title!,
+                  );
+                  if (item) {
+                    await FirebaseAuthProvider().updateAuthUSer(
+                        userId: user.id,
+                        playlistId: playlistName,
+                        songId: audioPlayerModel.id,
+                        isPlaylist: true);
+                    BlocProvider.of<AudioPlayerBloc>(context)
+                        .add(const AudioItemsRefreshAudioPlayerEvent());
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const HomePage(),
+                    ));
+                  }
+                },
+                splashColor: mainColor,
+                icon: const Icon(
+                  Icons.disabled_by_default_rounded,
+                  color: mainColor,
+                  size: 30,
                 ),
-                Text(
-                  audioPlayerModel.plays.toString(),
-                  style: TextStyle(color: mainColor.withAlpha(180)),
-                )
-              ],
-            )
+              ),
+            ),
           ],
-        ),
-        Material(
-          color: Colors.transparent,
-          shape: const CircleBorder(),
-          clipBehavior: Clip.hardEdge,
-          child: IconButton(
-            onPressed: () async {
-              if (isFavorite) {
-                await FirebaseAuthProvider().updateAuthUSer(
-                    userId: FirebaseAuthProvider().currentUser!.id,
-                    userFavoritesSong: audioPlayerModel.id,
-                    isFavorite: true,
-                    songId: audioPlayerModel.id);
-              } else {
-                await FirebaseAuthProvider().updateAuthUSer(
-                    userId: FirebaseAuthProvider().currentUser!.id,
-                    userFavoritesSong: audioPlayerModel.id,
-                    isFavorite: false,
-                    songId: audioPlayerModel.id);
-              }
-              BlocProvider.of<AudioPlayerBloc>(context)
-                  .add(const AudioItemsRefreshAudioPlayerEvent());
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const HomePage(),
-              ));
-            },
-            splashColor: mainColor,
-            icon: Icon(
-              isFavorite
-                  ? Icons.favorite_rounded
-                  : Icons.favorite_border_rounded,
-              color: mainColor,
+        );
+      } else {
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.favorite_rounded,
+                      size: 14,
+                      color: mainColor.withAlpha(120),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      audioPlayerModel.likes.toString(),
+                      style: TextStyle(color: mainColor.withAlpha(180)),
+                    )
+                  ],
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.play_arrow_rounded,
+                      size: 14,
+                      color: mainColor.withAlpha(120),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      audioPlayerModel.plays.toString(),
+                      style: TextStyle(color: mainColor.withAlpha(180)),
+                    )
+                  ],
+                )
+              ],
             ),
-          ),
-        ),
-      ],
-    );
+            const SizedBox(
+              width: 5,
+            ),
+            Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              clipBehavior: Clip.hardEdge,
+              child: IconButton(
+                onPressed: () async {
+                  if (isFavorite) {
+                    await FirebaseAuthProvider().updateAuthUSer(
+                        userId: FirebaseAuthProvider().currentUser!.id,
+                        userFavoritesSong: audioPlayerModel.id,
+                        isFavorite: true,
+                        songId: audioPlayerModel.id);
+                  } else {
+                    await FirebaseAuthProvider().updateAuthUSer(
+                        userId: FirebaseAuthProvider().currentUser!.id,
+                        userFavoritesSong: audioPlayerModel.id,
+                        isFavorite: false,
+                        songId: audioPlayerModel.id);
+                  }
+                  BlocProvider.of<AudioPlayerBloc>(context)
+                      .add(const AudioItemsRefreshAudioPlayerEvent());
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ));
+                },
+                splashColor: mainColor,
+                icon: Icon(
+                  isFavorite
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  color: mainColor,
+                ),
+              ),
+            ),
+            Material(
+              color: Colors.transparent,
+              shape: const CircleBorder(),
+              clipBehavior: Clip.hardEdge,
+              child: IconButton(
+                onPressed: () async {
+                  String? item = await showAddSongToPlaylistDialog(
+                    context,
+                    user,
+                  );
+                  if (item != null && user.userPlaylists != null) {
+                    for (var model in user.userPlaylists!) {
+                      if (model!.id == item) {
+                        var result = model.playlistSongs!
+                            .any((element) => element == audioPlayerModel.id);
+                        if (result) {
+                          await showErrorDialog(
+                              context, 'Song already in this playlist');
+                        } else {
+                          await FirebaseAuthProvider().updateAuthUSer(
+                              userId: user.id,
+                              playlistId: model.id,
+                              songId: audioPlayerModel.id);
+                        }
+                      }
+                    }
+                  }
+                  BlocProvider.of<AudioPlayerBloc>(context)
+                      .add(const AudioItemsRefreshAudioPlayerEvent());
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ));
+                },
+                splashColor: mainColor,
+                icon: const Icon(
+                  Icons.playlist_play_rounded,
+                  color: mainColor,
+                  size: 30,
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+    });
   }
 
   void Function() setCallBack(BuildContext context) {

@@ -10,8 +10,6 @@ import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/position_seek_widget.dart';
 import 'package:oktava/utilities/widgets/playing_controls_widget.dart';
-import 'package:oktava/views/album/album_list_view.dart';
-import 'package:oktava/views/artist/artist_list_view.dart';
 
 class FullPlayerView extends StatefulWidget {
   final backRoute;

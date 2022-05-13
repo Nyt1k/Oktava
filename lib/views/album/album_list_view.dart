@@ -4,9 +4,7 @@ import 'package:oktava/data/model/audio_player_model.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
-import 'package:oktava/services/auth/auth_service.dart';
 import 'package:oktava/services/auth/auth_user.dart';
-import 'package:oktava/services/auth/firebase_auth_provider.dart';
 import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/widgets/audio_track_widget.dart';
@@ -176,7 +174,8 @@ class _AlbumListViewState extends State<AlbumListView> {
             itemBuilder: (context, index) {
               return AudioTrackWidget(
                 audioPlayerModel: state.entityList[index],
-                isFavorite: isFavorite(state.entityList[index]),
+                isFavorite: isFavorite(state.entityList[index],
+                ), user: widget.user,
               );
             },
             itemCount: state.entityList.length,
@@ -263,6 +262,7 @@ class _AlbumListViewState extends State<AlbumListView> {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
                       isFavorite: isFavorite(state.entityList[index]),
+                      user: widget.user
                     );
                   },
                   itemCount: state.entityList.length,
@@ -357,6 +357,7 @@ class _AlbumListViewState extends State<AlbumListView> {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
                       isFavorite: isFavorite(state.entityList[index]),
+                      user: widget.user
                     );
                   },
                   itemCount: state.entityList.length,

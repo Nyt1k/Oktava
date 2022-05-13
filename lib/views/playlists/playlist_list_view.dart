@@ -6,37 +6,34 @@ import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_state.dart';
 import 'package:oktava/services/auth/auth_user.dart';
+import 'package:oktava/services/auth/firebase_auth_provider.dart';
+import 'package:oktava/services/storage/storage_audio_player_factory.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
+import 'package:oktava/utilities/dialogs/create_new_playlist_dialog.dart';
 import 'package:oktava/utilities/widgets/audio_track_widget.dart';
 import 'package:oktava/utilities/widgets/custom_progress_indicator.dart';
 import 'package:oktava/utilities/widgets/player_widget.dart';
+import 'package:oktava/views/playlists/playlists_view.dart';
 
-class UserFavoritesView extends StatefulWidget {
-  final List<AudioPlayerModel> models;
+class PlaylistListView extends StatefulWidget {
+  final List<AudioPlayerModel> playlist;
   final AuthUser user;
-  const UserFavoritesView({
+  final String playListName;
+  const PlaylistListView({
     Key? key,
-    required this.models,
+    required this.playlist,
     required this.user,
+    required this.playListName,
   }) : super(key: key);
 
   @override
-  State<UserFavoritesView> createState() => _UserFavoritesViewState();
+  State<PlaylistListView> createState() => _PlaylistListViewState();
 }
 
-class _UserFavoritesViewState extends State<UserFavoritesView> {
-  // List<AudioPlayerModel> favoritesList = [];
-
+class _PlaylistListViewState extends State<PlaylistListView> {
   @override
   void initState() {
     super.initState();
-    // for (var name in widget.user.userFavorites!) {
-    //   for (var model in widget.models) {
-    //     if (name == model.id) {
-    //       favoritesList.add(model);
-    //     }
-    //   }
-    // }
   }
 
   @override
@@ -47,7 +44,7 @@ class _UserFavoritesViewState extends State<UserFavoritesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: secondaryColor,
+      backgroundColor: additionalColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(60),
         child: AppBar(
@@ -62,22 +59,47 @@ class _UserFavoritesViewState extends State<UserFavoritesView> {
             splashColor: mainColor,
             color: mainColor,
             onPressed: () async {
-              setState(() {
-                BlocProvider.of<AudioPlayerBloc>(context)
-                    .add(const InitializeAudioPlayerEvent(null));
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => const HomePage()));
-              });
+              final list =
+                  await StorageAudioPlayerFactory().getModelsFromStorage();
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => PlaylistsView(
+                        models: list,
+                        user: widget.user,
+                      )));
             },
           ),
-          title: const Text(
-            "Songs you like",
-            style: TextStyle(
+          title: Text(
+            widget.playListName,
+            style: const TextStyle(
               color: mainColor,
             ),
           ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 25.0),
+              child: IconButton(
+                onPressed: () async {
+                  await FirebaseAuthProvider()
+                      .deletePlaylist(widget.user.id, widget.playListName);
+                  BlocProvider.of<AudioPlayerBloc>(context)
+                      .add(const InitializeAudioPlayerEvent(null));
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const HomePage()));
+                },
+                icon: const Icon(
+                  Icons.delete_forever_rounded,
+                  size: 35,
+                  color: mainColor,
+                ),
+                splashRadius: 28,
+                hoverColor: mainColor,
+                splashColor: mainColor,
+                color: mainColor,
+              ),
+            ),
+          ],
           elevation: 0,
-          backgroundColor: secondaryColor,
+          backgroundColor: additionalColor,
         ),
       ),
       body: Container(
@@ -87,23 +109,25 @@ class _UserFavoritesViewState extends State<UserFavoritesView> {
           builder: (context, state) {
             if (state is AudioPlayerInitialState) {
               BlocProvider.of<AudioPlayerBloc>(context)
-                  .add(InitializeAudioPlayerEvent(widget.models));
+                  .add(InitializeAudioPlayerEvent(widget.playlist));
               return buildCircularProgress();
             } else if (state is AudioPlayerReadyState) {
               return buildReadyTrackList(state);
             } else if (state is AudioPlayerPlayingState) {
               return buildPlayingTrackList(
                   state,
-                  UserFavoritesView(
-                    models: state.entityList,
+                  PlaylistListView(
+                    playlist: widget.playlist,
                     user: widget.user,
+                    playListName: widget.playListName,
                   ));
             } else if (state is AudioPlayerPausedState) {
               return buildPausedTrackList(
                   state,
-                  UserFavoritesView(
-                    models: state.entityList,
+                  PlaylistListView(
+                    playlist: widget.playlist,
                     user: widget.user,
+                    playListName: widget.playListName,
                   ));
             } else {
               return buildUnknownStateError();
@@ -135,7 +159,9 @@ class _UserFavoritesViewState extends State<UserFavoritesView> {
               return AudioTrackWidget(
                 audioPlayerModel: state.entityList[index],
                 isFavorite: isFavorite(state.entityList[index]),
-                user: widget.user
+                user: widget.user,
+                isPlaylist: true,
+                playlistName: widget.playListName,
               );
             },
             itemCount: state.entityList.length,
@@ -162,7 +188,9 @@ class _UserFavoritesViewState extends State<UserFavoritesView> {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
                       isFavorite: isFavorite(state.entityList[index]),
-                      user: widget.user
+                      user: widget.user,
+                      isPlaylist: true,
+                      playlistName: widget.playListName,
                     );
                   },
                   itemCount: state.entityList.length,
@@ -197,7 +225,9 @@ class _UserFavoritesViewState extends State<UserFavoritesView> {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
                       isFavorite: isFavorite(state.entityList[index]),
-                      user: widget.user
+                      user: widget.user,
+                      isPlaylist: true,
+                      playlistName: widget.playListName,
                     );
                   },
                   itemCount: state.entityList.length,

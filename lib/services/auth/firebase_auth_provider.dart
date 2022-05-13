@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:oktava/data/model/playlist_model.dart';
 import 'package:oktava/firebase_options.dart';
 import 'package:oktava/services/auth/auth_exception.dart';
 import 'package:oktava/services/auth/auth_provider.dart';
@@ -21,6 +22,7 @@ class FirebaseAuthProvider implements AuthProvider {
     String? userName,
     String? userProfileImage,
     List<String> userFavorites = const [],
+    List<PlaylistModels> userPlaylists = const [],
   }) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -36,6 +38,7 @@ class FirebaseAuthProvider implements AuthProvider {
           userName: userName,
           userProfileImage: userProfileImage,
           userFavorites: userFavorites,
+          userPlaylists: userPlaylists,
         );
         return user;
       } else {
@@ -144,13 +147,16 @@ class FirebaseAuthProvider implements AuthProvider {
     String? userName,
     String? userProfileImage,
     List<String>? userFavorites,
+    List<PlaylistModels>? userPlaylists,
   }) async {
+    Map<String, List<String?>> map = {};
     await firebaseInstance.collection('users').doc(userId).set({
       'email': email,
       'isVerified': isVerified,
       'userName': userName,
       'userProfileImage': userProfileImage,
       'userFavorites': userFavorites,
+      'userPlaylists': map,
     });
   }
 
@@ -170,6 +176,8 @@ class FirebaseAuthProvider implements AuthProvider {
     String? userFavoritesSong,
     bool? isFavorite,
     String? songId,
+    String? playlistId,
+    bool isPlaylist = false,
   }) async {
     if (isVerified != null && userName != null && userProfileImage != null) {
       await firebaseInstance.collection('users').doc(userId).update({
@@ -226,6 +234,30 @@ class FirebaseAuthProvider implements AuthProvider {
             .doc(songId)
             .update({'song_likes': FieldValue.increment(1)});
       }
+    } else if (playlistId != null) {
+      if (isPlaylist) {
+        await firebaseInstance.collection('users').doc(userId).update({
+          "userPlaylists.$playlistId": FieldValue.arrayRemove([songId])
+        });
+      } else {
+        await firebaseInstance.collection('users').doc(userId).update({
+          "userPlaylists.$playlistId": FieldValue.arrayUnion([songId])
+        });
+      }
     }
+  }
+
+  Future<void> savePlaylist(String userId, String playlistId) async {
+    await firebaseInstance
+        .collection('users')
+        .doc(userId)
+        .update({"userPlaylists.$playlistId": FieldValue.arrayUnion([])});
+  }
+
+  Future<void> deletePlaylist(String userId, String playlistId) async {
+    await firebaseInstance
+        .collection('users')
+        .doc(userId)
+        .update({"userPlaylists.$playlistId": FieldValue.delete()});
   }
 }

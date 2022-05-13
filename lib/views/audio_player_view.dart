@@ -190,6 +190,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
               return AudioTrackWidget(
                 audioPlayerModel: state.entityList[index],
                 isFavorite: isFavorite(state.entityList[index]),
+                user: widget.user
               );
             },
             itemCount: state.entityList.length,
@@ -317,6 +318,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
                       isFavorite: isFavorite(state.entityList[index]),
+                      user: widget.user
                     );
                   },
                   itemCount: state.entityList.length,
@@ -453,6 +455,7 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                     return AudioTrackWidget(
                       audioPlayerModel: state.entityList[index],
                       isFavorite: isFavorite(state.entityList[index]),
+                      user: widget.user
                     );
                   },
                   itemCount: state.entityList.length,

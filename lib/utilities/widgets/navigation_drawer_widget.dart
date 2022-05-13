@@ -18,6 +18,7 @@ import 'package:oktava/views/artist/artists_view.dart';
 import 'package:oktava/views/additional/upload_song_view.dart';
 import 'package:oktava/views/additional/user_profile_view.dart';
 import 'package:oktava/views/favorites/user_favorites_view.dart';
+import 'package:oktava/views/playlists/playlists_view.dart';
 
 class NavigationDrawerWidget extends StatelessWidget {
   final AuthUser user;
@@ -186,6 +187,16 @@ class NavigationDrawerWidget extends StatelessWidget {
           ),
         ));
         break;
+      case 5:
+        final list = await StorageAudioPlayerFactory().getModelsFromStorage();
+        Navigator.of(context).pop();
+        Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) => PlaylistsView(
+            models: list,
+            user: user!,
+          ),
+        ));
+        break;
       case 6:
         final list = await StorageAudioPlayerFactory()
             .getUserModelsFromStorage(user!.id);
@@ -273,7 +284,7 @@ class NavigationDrawerWidget extends StatelessWidget {
                       user.email,
                       overflow: TextOverflow.fade,
                       style: const TextStyle(
-                        fontSize: 11,
+                        fontSize: 9,
                         color: subColor,
                       ),
                     ),
