@@ -51,6 +51,13 @@ dependencies:
   file_picker: ^4.5.1
   firebase_storage: ^10.2.14
   gif_view: ^0.0.1
+  flutter_launcher_icons: ^0.9.2
+  flutter_native_splash: ^2.1.6
+
+flutter_native_splash:
+  image: "assets/images/logo.png"
+  color: "#454545"
+  
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +70,10 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
 
+flutter_icons:
+  image_path: "assets/images/logo.png"
+  android: true
+  ios: true
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

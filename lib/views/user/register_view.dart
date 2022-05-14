@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/services/auth/auth_exception.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
+import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/dialogs/error_dialog.dart';
 
 import '../../services/auth/bloc/auth_bloc.dart';
@@ -53,61 +54,151 @@ class _RegisterViewState extends State<RegisterView> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Register'),
-          backgroundColor: Colors.amberAccent,
+          centerTitle: true,
+          title: const Text(
+            'Register',
+            style: TextStyle(color: additionalColor),
+          ),
+          backgroundColor: mainColor,
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text('Enter email and password to register.'),
-            TextField(
-              controller: _userName,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'User Name'),
-            ),
-            TextField(
-              controller: _email,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(hintText: 'Email'),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(hintText: 'Password'),
-            ),
-            Center(
+        backgroundColor: additionalColor,
+        body: ListView(
+          physics: const BouncingScrollPhysics(),
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                    onPressed: () async {
-                      final email = _email.text;
-                      final password = _password.text;
-                      final userName = _userName.text;
-                      context.read<AuthBloc>().add(AuthEventRegister(
-                            email,
-                            password,
-                            userName,
-                          ));
-                    },
-                    child: const Text('Register'),
+                  const SizedBox(
+                    height: 30,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(
-                            const AuthEventLogOut(),
-                          );
-                    },
-                    child: const Text('Back to login'),
+                  const Center(
+                      child: Text(
+                    'Enter your account information to register.',
+                    style: TextStyle(color: mainColor),
+                  )),
+                  const SizedBox(
+                    height: 20,
                   ),
+                  TextField(
+                    controller: _userName,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    style: const TextStyle(color: mainColor),
+                    decoration: InputDecoration(
+                      hintText: 'User Name',
+                      disabledBorder: const OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: additionalColor, width: 2.0),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      hintStyle: TextStyle(color: mainColor.withAlpha(120)),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextField(
+                    controller: _email,
+                    autocorrect: false,
+                    keyboardType: TextInputType.emailAddress,
+                    style: const TextStyle(color: mainColor),
+                    decoration: InputDecoration(
+                      hintText: 'Email',
+                      disabledBorder: const OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: additionalColor, width: 2.0),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      hintStyle: TextStyle(color: mainColor.withAlpha(120)),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  TextField(
+                    controller: _password,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    style: const TextStyle(color: mainColor),
+                    decoration: InputDecoration(
+                      hintText: 'Password',
+                      disabledBorder: const OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: additionalColor, width: 2.0),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: mainColor, width: 2.0),
+                      ),
+                      hintStyle: TextStyle(color: mainColor.withAlpha(120)),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                    child: Column(
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(
+                              overlayColor: MaterialStateColor.resolveWith(
+                                  (states) => mainColor)),
+                          onPressed: () async {
+                            final email = _email.text;
+                            final password = _password.text;
+                            final userName = _userName.text;
+                            context.read<AuthBloc>().add(AuthEventRegister(
+                                  email,
+                                  password,
+                                  userName,
+                                ));
+                          },
+                          child: const Text('Register',
+                              style: TextStyle(color: mainColor)),
+                        ),
+                        TextButton(
+                          style: ButtonStyle(
+                              overlayColor: MaterialStateColor.resolveWith(
+                                  (states) => mainColor)),
+                          onPressed: () {
+                            context.read<AuthBloc>().add(
+                                  const AuthEventLogOut(),
+                                );
+                          },
+                          child: const Text('Back to login',
+                              style: TextStyle(color: mainColor)),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ]),
+            ),
+          ],
         ),
       ),
     );

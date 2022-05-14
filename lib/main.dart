@@ -32,7 +32,12 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  initialization(null);
   runApp(const App());
+}
+
+Future initialization(BuildContext? context) async {
+  await Future.delayed(const Duration(seconds: 3));
 }
 
 class App extends StatelessWidget {
@@ -46,10 +51,6 @@ class App extends StatelessWidget {
     ]);
     return MultiRepositoryProvider(
       providers: [
-        // RepositoryProvider<AudioPlayerProvider>(
-        //   create: (context) => LocalAudioPlayerService(
-        //       audioPlayerModels: AudioPlayerModelFactory.getAudioModels()),
-        // ),
         RepositoryProvider<AudioPlayerProvider>(
           create: (context) => FirebaseStorageAudioPlayerService(),
         )
@@ -67,6 +68,7 @@ class App extends StatelessWidget {
           )
         ],
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           home: const HomePage(),
           theme: ThemeData(
             textTheme: GoogleFonts.robotoTextTheme(Theme.of(context).textTheme),

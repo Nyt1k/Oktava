@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';
+import 'package:oktava/utilities/constants/color_constants.dart';
 import 'package:oktava/utilities/dialogs/error_dialog.dart';
 import 'package:oktava/utilities/dialogs/password_reset_email_dialog.dart';
 
@@ -44,37 +45,73 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
         }
       },
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Restore password'),
+          centerTitle: true,
+          title: const Text(
+            'Restore password',
+            style: TextStyle(color: additionalColor),
+          ),
+          backgroundColor: mainColor,
         ),
+        backgroundColor: additionalColor,
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
+              const SizedBox(
+                height: 30,
+              ),
               const Text(
-                  'Enter you email and we will send you password reset mail.'),
+                  'Enter you email and we will send you password reset mail.',
+                  style: TextStyle(color: mainColor)),
+              const SizedBox(
+                height: 30,
+              ),
               TextField(
                 keyboardType: TextInputType.emailAddress,
                 autocorrect: false,
                 controller: _controller,
-                decoration: const InputDecoration(
+                style: const TextStyle(color: mainColor),
+                decoration: InputDecoration(
                   hintText: 'Your email address...',
+                  disabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: additionalColor, width: 2.0),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: mainColor, width: 2.0),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: mainColor, width: 2.0),
+                  ),
+                  border: const OutlineInputBorder(
+                    borderSide: BorderSide(color: mainColor, width: 2.0),
+                  ),
+                  hintStyle: TextStyle(color: mainColor.withAlpha(120)),
                 ),
               ),
               TextButton(
+                style: ButtonStyle(
+                    overlayColor:
+                        MaterialStateColor.resolveWith((states) => mainColor)),
                 onPressed: () {
                   final email = _controller.text;
                   context
                       .read<AuthBloc>()
                       .add(AuthEventForgotPassword(email: email));
                 },
-                child: const Text('Send me password'),
+                child: const Text('Send me password',
+                    style: TextStyle(color: mainColor)),
               ),
               TextButton(
+                style: ButtonStyle(
+                    overlayColor:
+                        MaterialStateColor.resolveWith((states) => mainColor)),
                 onPressed: () {
                   context.read<AuthBloc>().add(const AuthEventLogOut());
                 },
-                child: const Text('Back to login page'),
+                child: const Text('Back to login page',
+                    style: TextStyle(color: mainColor)),
               ),
             ],
           ),
