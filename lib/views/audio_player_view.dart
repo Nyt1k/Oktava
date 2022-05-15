@@ -103,7 +103,8 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                         if (value.isNotEmpty) {
                           List<AudioPlayerModel> dummyListData = [];
                           for (var item in dummySearchList) {
-                            if (item.audio.metas.title!.contains(value)) {
+                            if (item.audio.metas.title!.contains(value) ||
+                                item.songTags!.contains(value)) {
                               dummyListData.add(item);
                             }
                           }
@@ -188,10 +189,9 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
           child: ListView.builder(
             itemBuilder: (context, index) {
               return AudioTrackWidget(
-                audioPlayerModel: state.entityList[index],
-                isFavorite: isFavorite(state.entityList[index]),
-                user: widget.user
-              );
+                  audioPlayerModel: state.entityList[index],
+                  isFavorite: isFavorite(state.entityList[index]),
+                  user: widget.user);
             },
             itemCount: state.entityList.length,
           ),
@@ -316,10 +316,9 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                   padding: const EdgeInsets.only(bottom: 124),
                   itemBuilder: (context, index) {
                     return AudioTrackWidget(
-                      audioPlayerModel: state.entityList[index],
-                      isFavorite: isFavorite(state.entityList[index]),
-                      user: widget.user
-                    );
+                        audioPlayerModel: state.entityList[index],
+                        isFavorite: isFavorite(state.entityList[index]),
+                        user: widget.user);
                   },
                   itemCount: state.entityList.length,
                 ),
@@ -453,10 +452,9 @@ class _AudioPlayerViewState extends State<AudioPlayerView> {
                   padding: const EdgeInsets.only(bottom: 96),
                   itemBuilder: (context, index) {
                     return AudioTrackWidget(
-                      audioPlayerModel: state.entityList[index],
-                      isFavorite: isFavorite(state.entityList[index]),
-                      user: widget.user
-                    );
+                        audioPlayerModel: state.entityList[index],
+                        isFavorite: isFavorite(state.entityList[index]),
+                        user: widget.user);
                   },
                   itemCount: state.entityList.length,
                 ),

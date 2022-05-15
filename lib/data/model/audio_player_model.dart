@@ -32,7 +32,14 @@ class AudioPlayerModel extends Equatable {
   bool get stringify => true;
 
   AudioPlayerModel copyWithIsPlaying(bool isPlaying) {
-    return AudioPlayerModel(id: id, audio: audio, isPlaying: isPlaying, likes: likes, plays: plays);
+    return AudioPlayerModel(
+        id: id,
+        audio: audio,
+        isPlaying: isPlaying,
+        likes: likes,
+        plays: plays,
+        songTags: songTags,
+        songText: songText,);
   }
 
   factory AudioPlayerModel.fromDocumentSnapshot(

@@ -28,8 +28,8 @@ Future<AudioPlayerModel?> showUpdateSongDialog(
 
   if (answer) {
     newModel!.audio.updateMetas(title: songName.text, album: songAlbum.text);
-    newModel!.songTags = model.songTags!;
-    newModel!.songText = model.songText!;
+    newModel!.songTags = songTags.text;
+    newModel!.songText = songText.text;
     return newModel;
   }
   return null;
@@ -43,8 +43,12 @@ Widget updateSongDialog(BuildContext context, AudioPlayerModel model) {
   songTags.text = model.songTags!;
   songText.text = model.songText!;
 
-  newModel =
-      AudioPlayerModel(id: model.id, audio: model.audio, isPlaying: false, likes: model.likes, plays: model.plays);
+  newModel = AudioPlayerModel(
+      id: model.id,
+      audio: model.audio,
+      isPlaying: false,
+      likes: model.likes,
+      plays: model.plays);
   return SizedBox(
     height: 500,
     width: 350,

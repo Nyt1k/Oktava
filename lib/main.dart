@@ -26,7 +26,6 @@ import 'package:oktava/views/user/verify_email_view.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   AssetsAudioPlayer.setupNotificationsOpenAction((notification) {
-    print(notification.audioId);
     return true;
   });
   await Firebase.initializeApp(

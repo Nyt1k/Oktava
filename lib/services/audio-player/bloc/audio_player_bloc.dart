@@ -142,7 +142,10 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
               await audioPlayerProvider.updateModel(updatedModel);
 
           await assetsAudioPlayer.open(
-            Audio.network(updatedModel.audio.path),
+            Playlist(audios: [
+              Audio.network(updatedModel.audio.path,
+                  metas: updatedModel.audio.metas)
+            ]),
             showNotification: true,
           );
 
@@ -160,9 +163,11 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
             final updatedList =
                 await audioPlayerProvider.updateModel(updatedModel);
             await assetsAudioPlayer.open(
-              Audio.network(updatedModel.audio.path),
+              Playlist(audios: [
+                Audio.network(updatedModel.audio.path,
+                    metas: updatedModel.audio.metas)
+              ]),
               showNotification: true,
-              respectSilentMode: true,
               headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
             );
 
@@ -188,7 +193,10 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
           final updatedNewList =
               await audioPlayerProvider.updateModel(updatedModel);
           await assetsAudioPlayer.open(
-            Audio.network(updatedModel.audio.path),
+            Playlist(audios: [
+              Audio.network(updatedModel.audio.path,
+                  metas: updatedModel.audio.metas)
+            ]),
             showNotification: true,
           );
 
@@ -248,7 +256,10 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
             await audioPlayerProvider.updateModel(updatedModel);
 
         await assetsAudioPlayer.open(
-          Audio.network(currentList[index - 1].audio.path),
+          Playlist(audios: [
+            Audio.network(currentList[index - 1].audio.path,
+                metas: updatedModel.audio.metas)
+          ]),
           showNotification: true,
         );
 
@@ -295,7 +306,10 @@ class AudioPlayerBloc extends Bloc<AudioPlayerEvent, AudioPlayerState> {
             await audioPlayerProvider.updateModel(updatedModel);
 
         await assetsAudioPlayer.open(
-          Audio.network(currentList[index + 1].audio.path),
+          Playlist(audios: [
+            Audio.network(currentList[index + 1].audio.path,
+                metas: updatedModel.audio.metas)
+          ]),
           showNotification: true,
         );
 

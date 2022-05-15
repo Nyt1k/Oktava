@@ -8,6 +8,7 @@ import 'package:oktava/main.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_bloc.dart';
 import 'package:oktava/services/audio-player/bloc/audio_player_event.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
+import 'package:oktava/utilities/dialogs/song_text_dialog.dart';
 import 'package:oktava/utilities/widgets/position_seek_widget.dart';
 import 'package:oktava/utilities/widgets/playing_controls_widget.dart';
 
@@ -169,31 +170,52 @@ class _FullPlayerViewState extends State<FullPlayerView> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  Column(
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
                                     children: [
                                       const SizedBox(
-                                        height: 15,
+                                        width: 50,
                                       ),
-                                      Text(
-                                        myAudio.metas.artist.toString(),
-                                        style: const TextStyle(
-                                            color: mainColor,
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold),
+                                      Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          Text(
+                                            myAudio.metas.artist.toString(),
+                                            style: const TextStyle(
+                                                color: mainColor,
+                                                fontSize: 24,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            myAudio.metas.title.toString(),
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                          Text(
+                                            myAudio.metas.album.toString(),
+                                            style: TextStyle(
+                                                color: mainColor.withAlpha(170),
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        myAudio.metas.title.toString(),
-                                        style: const TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 20,
+                                      IconButton(
+                                        splashColor: mainColor,
+                                        onPressed: () async {
+                                          await showSongTextDialog(context,
+                                              model.songText!, model.songTags!);
+                                        },
+                                        icon: const Icon(
+                                          Icons.list_alt_rounded,
+                                          color: mainColor,
+                                          size: 30,
                                         ),
-                                      ),
-                                      Text(
-                                        myAudio.metas.album.toString(),
-                                        style: TextStyle(
-                                            color: mainColor.withAlpha(170),
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
