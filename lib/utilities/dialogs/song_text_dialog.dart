@@ -53,7 +53,7 @@ Widget tagsContainer(String songTags) {
           ),
           child: Center(
             child: Text(
-              result[index],
+              '#' + result[index],
               style: const TextStyle(color: additionalColor, fontSize: 12),
             ),
           ),

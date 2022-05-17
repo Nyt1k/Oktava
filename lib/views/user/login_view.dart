@@ -1,10 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:oktava/services/auth/auth_exception.dart';
 import 'package:oktava/services/auth/bloc/auth_bloc.dart';
 import 'package:oktava/services/auth/bloc/auth_event.dart';
 import 'package:oktava/services/auth/bloc/auth_state.dart';
 import 'package:oktava/utilities/constants/color_constants.dart';
+import 'package:oktava/utilities/widgets/app_icon_widget.dart';
 
 import '../../utilities/dialogs/error_dialog.dart';
 
@@ -54,7 +58,46 @@ class _LoginViewState extends State<LoginView> {
             'Login',
             style: TextStyle(color: additionalColor),
           ),
-          backgroundColor: mainColor,
+          backgroundColor: additionalColor,
+          shadowColor: Colors.transparent,
+          leading: IconButton(
+            icon: Transform(
+              alignment: Alignment.center,
+              transform: Matrix4.rotationY(math.pi),
+              child: const Icon(
+                Icons.exit_to_app_rounded,
+                size: 32,
+              ),
+            ),
+            splashRadius: 15,
+            hoverColor: mainColor,
+            splashColor: mainColor,
+            color: mainColor,
+            onPressed: () {
+              SystemNavigator.pop();
+            },
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.question_mark_rounded,
+                size: 32,
+              ),
+              splashRadius: 15,
+              hoverColor: mainColor,
+              splashColor: mainColor,
+              color: mainColor,
+              onPressed: () {
+                showAboutDialog(
+                    context: context,
+                    applicationVersion: 'version: 1.0.1',
+                    applicationName: 'Oktava',
+                    applicationIcon: appIcon(),
+                    applicationLegalese:
+                        'Oktava is music streaming platform, where people can publish there song and others can listen them.');
+              },
+            )
+          ],
         ),
         backgroundColor: additionalColor,
         body: ListView(physics: const BouncingScrollPhysics(), children: [
